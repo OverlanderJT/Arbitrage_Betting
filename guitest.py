@@ -1,7 +1,7 @@
 from tkinter import *
 from tkscrolledframe import ScrolledFrame
 from pandas import *
-import numpy as np
+from numpy import nan
 
 
 def selectall():
@@ -42,18 +42,18 @@ df1 = DataFrame({
     'Bet1 fd': [125, 195, -115, -175, 270],
     'Bet1 dk': [130, 200, -130, -180, 285],
     'Bet1 bm': [135, 185, -110, -165, 280],
-    'Max Bet1': np.nan,
-    'Max Bet1 Casino': np.nan,
-    'Max Bet1 Conv': np.nan,
+    'Max Bet1': nan,
+    'Max Bet1 Casino': nan,
+    'Max Bet1 Conv': nan,
     'Name2': ['Chris', 'Romeo', 'Blake', 'Philip', 'Jake'],
     'Bet2 fd': [-110, -180, 130, 180, -220],
     'Bet2 dk': [-120, -170, 110, 175, -225],
     'Bet2 bm': [-115, -165, 115, 170, -230],
-    'Max Bet2': np.nan,
-    'Max Bet2 Casino': np.nan,
-    'Max Bet2 Conv': np.nan,
-    'Arb value': np.nan,
-    'Arb': np.nan
+    'Max Bet2': nan,
+    'Max Bet2 Casino': nan,
+    'Max Bet2 Conv': nan,
+    'Arb value': nan,
+    'Arb': nan
 })
 
 
