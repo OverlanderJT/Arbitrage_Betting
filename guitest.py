@@ -3,7 +3,7 @@ from tkscrolledframe import ScrolledFrame
 from pandas import *
 import numpy as np
 
-#test change asd
+
 def selectall():
     var1.set(1)
     var2.set(1)
