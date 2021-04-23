@@ -80,7 +80,7 @@ temp_names_dk = []
 for i in range(len(html_bets_dk) - 16):
     if (i % 3 == 2):
         temp_bets_dk.append(html_bets_dk[i].getText().replace("\n", "").replace("\t", ""))
-for i in range(len(html_names_dk) - 16):
+for i in range(len(html_names_dk) - 16): #the -16 changes depending on how many games there are tomorrow
     temp1 = html_names_dk[i].getText().replace("\n", "").replace("\t", "")
     temp2 = ''
     for j in range(len(temp1)):

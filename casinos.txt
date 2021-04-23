@@ -1,0 +1,21 @@
+List of casinos, their URLs for each game, their class names for scraping the data, their casino ID "fd, dk, bm, etc."
+
+Draftkings Sportsbook
+id = dk
+UFCURL = 
+NBAURL = 
+NHLURL =
+
+Fanduel Sportsbook
+id = fd
+UFCURL = 
+UFCBetClass = 
+UFCNameClass = 
+NHLURL = 
+NBAURL =
+
+Bet MGM
+id = bm
+UFCURL = 
+NHLURL = 
+NBAURL =
