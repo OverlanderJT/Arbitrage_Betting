@@ -55,7 +55,7 @@ df1 = DataFrame({
     'Arb value': nan,
     'Arb': nan
 })
-
+casinos = ['dk','fd','bm']
 
 df1['Max Bet1'] = df1[{'Bet1 dk', 'Bet1 fd', 'Bet1 bm'}].max(axis=1)
 df1['Max Bet1 Casino'] = df1[{'Bet1 dk', 'Bet1 fd', 'Bet1 bm'}].idxmax(axis='columns').str[-2:]
@@ -156,7 +156,7 @@ sf3.pack(expand='yes',fill='both')
 sf3.bind_arrow_keys(root3)
 sf3.bind_scroll_wheel(root3)
 innerf3 = sf3.display_widget(Frame)
-frame1 = Frame(innerf3,width=1900,height=475,bd=5)
+frame1 = Frame(innerf3)
 frame1.pack(side='top')
 frame1.pack_propagate(0)
 
@@ -175,36 +175,41 @@ def switch():
 radio = IntVar()
 
 gamevs = Label(frame1,text='vs',font=('Arial',40))
-gamevs.place(relx=0.5,rely=0,anchor='n')
+gamevs.grid(row=0,column=1,sticky='n')
 labelname1 = Label(frame1, text='{}'.format(df1.at[0,'Name1']),font=('Arial',40))
-labelname1.place(relx=0.45,rely=0,anchor='ne')
+labelname1.grid(row=0,column=0,sticky='ne')
 labelname2 = Label(frame1, text='{}'.format(df1.at[0,'Name2']),font=('Arial',40))
-labelname2.place(relx=0.55,rely=0,anchor='nw')
-fdlabel = Label(frame1,text='fd',font=('Arial',30)).place(relx=0.5,rely=0.175,anchor='n')
-dklabel = Label(frame1,text='dk',font=('Arial',30)).place(relx=0.5,rely=0.29,anchor='n')
-bmlabel = Label(frame1,text='bm',font=('Arial',30)).place(relx=0.5,rely=0.405,anchor='n')
-arb = Label(frame1,text='Arb',font=('Arial',30)).place(relx=0.5,rely=0.55,anchor='n')
-arbvalue = Label(frame1,text=round(df1.at[0,'Arb value'],4),font=('Arial',25)).place(relx=0.5,rely=0.64,anchor='n')
-ssbutton = Button(frame1, text='Generate Spreadsheet',font=('Arial',15),borderwidth=4).place(relx=0.5,rely=0.75,anchor='n')
-calcbutton = Button(frame1, text='Calculate',font=('Arial',15),borderwidth=4).place(relx=0.5,rely=1,anchor='s')
+labelname2.grid(row=0,column=2,sticky='nw')
 
-entryB = Entry(frame1, width=6,font=('Arial',20),state='disabled').place(relx=0.535,rely=1,anchor='sw')
-radioB = Radiobutton(frame1,variable=radio,value=1,command=switch,text='B',font=('Arial',20)).place(relx=0.585,rely=1,anchor='sw')
-entryA = Entry(frame1, width=6,font=('Arial',20)).place(relx=0.465,rely=1,anchor='se')
-radioA = Radiobutton(frame1,variable=radio,value=0,command=switch,text='A',font=('Arial',20)).place(relx=0.415,rely=1,anchor='se')
-
-
-
-for j in range(3):
-    labelbet1 = Label(frame1,text=df1.iat[0,j+1],font=('Arial',30))
-    labelbet1.place(relx=0.45,rely=(0.175+(j*0.115)),anchor='ne')
+for j in range(len(casinos)):
+    labelbet1 = Label(frame1,text=df1.at[0,'Bet1 {}'.format(casinos[j])],font=('Arial',30))
+    labelbet1.grid(row=1+j,column=0,sticky='ne')
     if labelbet1['text'] == str(df1.at[0,'Max Bet1']):
         labelbet1.configure(relief='groove',borderwidth=4)
-    labelbet2 = Label(frame1, text=df1.iat[0, j + 8], font=('Arial', 30))
-    labelbet2.place(relx=0.55, rely=(0.175 + (j * 0.115)), anchor='nw')
+    labelcasino = Label(frame1,text='{}'.format(casinos[j]),font=('Arial',30))
+    labelcasino.grid(row=1+j,column=1,sticky='n')
+    labelbet2 = Label(frame1, text=df1.at[0, 'Bet2 {}'.format(casinos[j])], font=('Arial', 30))
+    labelbet2.grid(row=1+j,column=2,sticky='nw')
     if labelbet2['text'] == str(df1.at[0,'Max Bet2']):
         labelbet2.configure(relief='groove',borderwidth=4)
 
+arb = Label(frame1,text='Arb',font=('Arial',30)).grid(row=j+2,column=1,sticky='n')
+arbvalue = Label(frame1,text=round(df1.at[0,'Arb value'],4),font=('Arial',25)).grid(row=j+3,column=1,sticky='n')
+ssbutton = Button(frame1, text='Generate Spreadsheet',font=('Arial',15),borderwidth=4).grid(row=j+4,column=1,sticky='n')
+
+frame2 = Frame(innerf3)
+frame2.pack(side='top')
+
+calcbutton = Button(frame2, text='Calculate',font=('Arial',15),borderwidth=4).grid(row=0,column=2,sticky='n',padx=3,pady=6)
+
+entryB = Entry(frame2, width=6,font=('Arial',20),state='disabled').grid(row=0,column=3,sticky='nw',padx=3,pady=6)
+radioB = Radiobutton(frame2,variable=radio,value=1,command=switch,text='B',font=('Arial',20)).grid(row=0,column=4,sticky='nw',padx=3,pady=6)
+entryA = Entry(frame2, width=6,font=('Arial',20)).grid(row=0,column=1,sticky='ne',padx=3,pady=6)
+radioA = Radiobutton(frame2,variable=radio,value=0,command=switch,text='A',font=('Arial',20)).grid(row=0,column=0,sticky='ne',padx=3,pady=6)
+profitA = Label(frame2, text='Profit if A wins:',font=('Arial',14)).grid(row=1,column=0,sticky='ne')
+profitA2 = Label(frame2, text='$idk',font=('Arial',14)).grid(row=1,column=1,sticky='nw')
+profitB = Label(frame2, text='Profit if B wins:',font=('Arial',14)).grid(row=1,column=2,columnspan=2,sticky='ne')
+profitB2 = Label(frame2, text='$idk',font=('Arial',14)).grid(row=1,column=4,sticky='nw')
 
 
 

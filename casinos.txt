@@ -2,20 +2,20 @@ List of casinos, their URLs for each game, their class names for scraping the da
 
 Draftkings Sportsbook
 id = dk
-UFCURL = 
-NBAURL = 
-NHLURL =
+UFCURL = https://sportsbook.draftkings.com/leagues/mma/2162?category=fight-lines&subcategory=moneyline
+NBAURL = https://sportsbook.draftkings.com/leagues/basketball/103?category=game-lines&subcategory=game
+NHLURL = https://sportsbook.draftkings.com/leagues/hockey/2022?category=game-lines&subcategory=game
 
 Fanduel Sportsbook
 id = fd
-UFCURL = 
+UFCURL = https://sportsbook.fanduel.com/sports/navigation/7287.1/9886.3
 UFCBetClass = 
 UFCNameClass = 
-NHLURL = 
-NBAURL =
+NHLURL = https://sportsbook.fanduel.com/sports/navigation/1550.1/10329.3
+NBAURL = https://sportsbook.fanduel.com/sports/navigation/830.1/10107.3
 
 Bet MGM
 id = bm
-UFCURL = 
-NHLURL = 
-NBAURL =
+UFCURL = https://sports.mi.betmgm.com/en/sports/mma-45
+NHLURL = https://sports.mi.betmgm.com/en/sports/ice-hockey-12/betting/north-america-9/nhl-34
+NBAURL = https://sports.mi.betmgm.com/en/sports/basketball-7/betting/north-america-9/nba-6004
