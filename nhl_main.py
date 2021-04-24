@@ -132,7 +132,7 @@ names1_dk, names2_dk, bets1_dk, bets2_dk = func.alphabetize(names1_dk, names2_dk
 names1_fd, names2_fd, bets1_fd, bets2_fd = func.alphabetize(names1_fd, names2_fd, bets1_fd, bets2_fd)
 names1_bm, names2_bm, bets1_bm, bets2_bm = func.alphabetize(names1_bm, names2_bm, bets1_bm, bets2_bm)
 
-#initiilizes all of the dfs. These provide the basis for df_all. Need to add 1 per new casino
+#initiilizes all of the dfs. These provide the basis for df_all. Need to add 1 per new casino. These lines might be useless
 df_dk = pd.DataFrame({'Team 1':names1_dk,'Bet 1':bets1_dk,'Team 2':names2_dk,'Bet 2':bets2_dk})
 df_fd = pd.DataFrame({'Team 1':names1_fd,'Bet 1':bets1_fd,'Team 2':names2_fd,'Bet 2':bets2_fd})
 df_bm = pd.DataFrame({'Team 1':names1_bm,'Bet 1':bets1_bm,'Team 2':names2_bm,'Bet 2':bets2_bm})

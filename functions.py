@@ -20,19 +20,13 @@ def singleconvert(odd):
     conv = int(odd.replace("+", ""))
     return conv
 
-def makedf_all(df, names1, names2, bets1, bets2, casino):
+def makedf_all(df, names1, names2, bets1, bets2, casino, casinolist):
     #adds all of the fights to the final df, combining when it can
 
-    #add another elif statement for every new casino to be added
-    if casino == 'fd':
-        bet1 = 'Bet1 fd'
-        bet2 = 'Bet2 fd'
-    elif casino == 'dk':
-        bet1 = 'Bet1 dk'
-        bet2 = 'Bet2 dk'
-    elif casino == 'bm':
-        bet1 = 'Bet1 bm'
-        bet2 = 'Bet2 bm'
+    for i in casinolist:
+        if casino == i:
+            bet1 = 'Bet1 {}'.format(i)
+            bet2 = 'Bet2 {}'.format(i)
 
     #compares the df_all to the new df being added. If the fight names match, adds the bets, if not, adds the new fight to the end of the df.
     #this makes it so that this can be used for an infinite amount of casinos (assuming the relavent columns have been added)
@@ -46,13 +40,13 @@ def makedf_all(df, names1, names2, bets1, bets2, casino):
                 df = df.append({'Team 1': names1[i], bet1: bets1[i], 'Team 2': names2[i], bet2: bets2[i]},ignore_index=True)
     return df
 
-def arbs(df):
+def arbs(df, casinolist):
     #finds the max bets
-    df['Max Bet1'] = df[{'Bet1 dk', 'Bet1 fd', 'Bet1 bm'}].max(axis=1)
-    df['Max Bet1 Casino'] = df[{'Bet1 dk', 'Bet1 fd', 'Bet1 bm'}].idxmax(axis='columns').str[-2:]
+    df['Max Bet1'] = df.iloc[:,1:len(casinolist)+1].max(axis=1)
+    df['Max Bet1 Casino'] = df.iloc[:,1:len(casinolist)+1].idxmax(axis='columns').str[-2:]
 
-    df['Max Bet2'] = df[{'Bet2 dk', 'Bet2 fd', 'Bet2 bm'}].max(axis=1)
-    df['Max Bet2 Casino'] = df[{'Bet2 dk', 'Bet2 fd', 'Bet2 bm'}].idxmax(axis='columns').str[-2:]
+    df['Max Bet2'] = df.iloc[:,(5+len(casinolist)):len(casinolist)+(5+len(casinolist))].max(axis=1)
+    df['Max Bet2 Casino'] = df.iloc[:,(5+len(casinolist)):len(casinolist)+(5+len(casinolist))].idxmax(axis='columns').str[-2:]
 
     #converts max bets to non american odds
     df.loc[df['Max Bet1'] < 0, 'Max Bet1 Conv'] = (-100 / df['Max Bet1']) + 1
@@ -63,8 +57,8 @@ def arbs(df):
     #calculates arbs and fill NaN values
     df['Arb value'] = (1 / df['Max Bet1 Conv']) + (1 / df['Max Bet2 Conv'])
     df.loc[df['Arb value'] <= 1, 'Arb'] = True
-    values = {'Bet1 dk':0,'Bet1 fd':0,'Bet1 bm':0,'Bet2 dk':0,'Bet2 fd':0,'Bet2 bm':0,'Arb':False}
-    df = df.fillna(value=values)
+    df = df.fillna(value={'Arb':False})
+    df = df.fillna(0)
 
     return df
 
@@ -122,22 +116,14 @@ def opss(df):
                 sheet3.write_formula(k + 1, j + 1, '=({}*Sheet1!$C$2)/({}+{})'.format(xl_rowcol_to_cell(0, j + 1),xl_rowcol_to_cell(k + 1, 0),xl_rowcol_to_cell(0, j + 1)))
         wb.close()
 
-def makedf_all3(df, names1, names2, bets1, bets2, bets3, casino):
+def makedf_all3(df, names1, names2, bets1, bets2, bets3, casino,casinolist):
     #adds all of the fights to the final df, combining when it can
 
-    #add another elif statement for every new casino to be added
-    if casino == 'fd':
-        bet1 = 'Bet1 fd'
-        bet2 = 'Bet2 fd'
-        bet3 = 'Bet3 fd'
-    elif casino == 'dk':
-        bet1 = 'Bet1 dk'
-        bet2 = 'Bet2 dk'
-        bet3 = 'Bet3 dk'
-    elif casino == 'bm':
-        bet1 = 'Bet1 bm'
-        bet2 = 'Bet2 bm'
-        bet3 = 'Bet3 bm'
+    for i in casinolist:
+        if casino == i:
+            bet1 = 'Bet1 {}'.format(i)
+            bet2 = 'Bet2 {}'.format(i)
+            bet3 = 'Bet3 {}'.format(i)
 
     #compares the df_all to the new df being added. If the fight names match, adds the bets, if not, adds the new fight to the end of the df.
     #this makes it so that this can be used for an infinite amount of casinos (assuming the relavent columns have been added)
@@ -152,16 +138,16 @@ def makedf_all3(df, names1, names2, bets1, bets2, bets3, casino):
                 df = df.append({'Team 1': names1[i], bet1: bets1[i], 'Team 2': names2[i], bet2: bets2[i], bet3: bets3[i]},ignore_index=True)
     return df
 
-def arbs3(df):
+def arbs3(df,casinolist):
     #finds the max bets
-    df['Max Bet1'] = df[{'Bet1 dk', 'Bet1 fd', 'Bet1 bm'}].max(axis=1)
-    df['Max Bet1 Casino'] = df[{'Bet1 dk', 'Bet1 fd', 'Bet1 bm'}].idxmax(axis='columns').str[-2:]
+    df['Max Bet1'] = df.iloc[:, 1:len(casinolist) + 1].max(axis=1)
+    df['Max Bet1 Casino'] = df.iloc[:, 1:len(casinolist) + 1].idxmax(axis='columns').str[-2:]
 
-    df['Max Bet2'] = df[{'Bet2 dk', 'Bet2 fd', 'Bet2 bm'}].max(axis=1)
-    df['Max Bet2 Casino'] = df[{'Bet2 dk', 'Bet2 fd', 'Bet2 bm'}].idxmax(axis='columns').str[-2:]
-
-    df['Max Bet3'] = df[{'Bet3 dk', 'Bet3 fd', 'Bet3 bm'}].max(axis=1)
-    df['Max Bet3 Casino'] = df[{'Bet3 dk', 'Bet3 fd', 'Bet3 bm'}].idxmax(axis='columns').str[-2:]
+    df['Max Bet2'] = df.iloc[:, (5 + len(casinolist)):len(casinolist) + (5 + len(casinolist))].max(axis=1)
+    df['Max Bet2 Casino'] = df.iloc[:, (5 + len(casinolist)):len(casinolist) + (5 + len(casinolist))].idxmax(axis='columns').str[-2:]
+    #you will have to change the 5 to something else. Idk what it should be yet
+    df['Max Bet3'] = df.iloc[:, (5 + len(casinolist)):len(casinolist) + (5 + len(casinolist))].max(axis=1)
+    df['Max Bet3 Casino'] = df.iloc[:, (5 + len(casinolist)):len(casinolist) + (5 + len(casinolist))].idxmax(axis='columns').str[-2:]
 
     #converts max bets to non american odds
     df.loc[df['Max Bet1'] < 0, 'Max Bet1 Conv'] = (-100 / df['Max Bet1']) + 1
@@ -174,8 +160,8 @@ def arbs3(df):
     #calculates arbs and fill NaN values
     df['Arb value'] = (1 / df['Max Bet1 Conv']) + (1 / df['Max Bet2 Conv']) + (1 / df['Max Bet3 Conv'])
     df.loc[df['Arb value'] <= 1, 'Arb'] = True
-    values = {'Bet1 dk':0,'Bet1 fd':0,'Bet1 bm':0,'Bet2 dk':0,'Bet2 fd':0,'Bet2 bm':0,'Bet3 dk':0,'Bet3 fd':0,'Bet3 bm':0,'Arb':False}
-    df = df.fillna(value=values)
+    df = df.fillna(value={'Arb': False})
+    df = df.fillna(0)
 
     return df
 
