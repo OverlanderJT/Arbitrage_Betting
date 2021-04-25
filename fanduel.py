@@ -1,7 +1,6 @@
 from functions import *
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
-import time
 
 def ufc_data():
     options = Options()
