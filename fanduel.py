@@ -2,6 +2,7 @@ from functions import *
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 
+
 def ufc_data():
     options = Options()
     options.headless = True
@@ -23,6 +24,7 @@ def ufc_data():
             names2.append(name)
     driver.quit()
     return alphabetize(names1, names2, bets1, bets2)
+
 
 def nhl_data():
     options = Options()
@@ -57,6 +59,7 @@ def nhl_data():
             names2.append(temp2)
     driver.quit()
     return alphabetize(names1, names2, bets1, bets2)
+
 
 def nba_data():
     options = Options()
