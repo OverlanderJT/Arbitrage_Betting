@@ -35,10 +35,10 @@ def javaData(driver, url, nameclass, betclass):
     return html_names, html_bets
 
 def data(url, nametag, nameclass, bettag, betclass):
-    page_dk = urllib.request.urlopen(url)
-    soup_dk = BeautifulSoup(page_dk, "html.parser")
-    html_bets = soup_dk.find_all(bettag, attrs={"class": betclass})
-    html_names = soup_dk.find_all(nametag, attrs={"class": nameclass})
+    page = urllib.request.urlopen(url)
+    soup = BeautifulSoup(page, "html.parser")
+    html_bets = soup.find_all(bettag, attrs={"class": betclass})
+    html_names = soup.find_all(nametag, attrs={"class": nameclass})
     return html_names,html_bets
 
 
