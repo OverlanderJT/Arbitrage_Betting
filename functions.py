@@ -25,16 +25,13 @@ class Casino():
         self.nhlurl = nhlurl
 
 
-def javaData(url, nameclass, betclass):
-    options = Options()
-    options.headless = True
-    driver_fd = webdriver.Firefox(options=options)
-    driver_fd.get(url)
-    driver_fd.execute_script(
+def javaData(driver, url, nameclass, betclass):
+    driver.get(url)
+    driver.execute_script(
         "window.scrollTo(0,document.body.scrollHeight);var lenOfPage=document.body.scrollHeight;return lenOfPage;")
-    time.sleep(15)
-    html_bets = driver_fd.find_elements_by_class_name(betclass)
-    html_names = driver_fd.find_elements_by_class_name(nameclass)
+    time.sleep(5)
+    html_bets = driver.find_elements_by_class_name(betclass)
+    html_names = driver.find_elements_by_class_name(nameclass)
     return html_names, html_bets
 
 def data(url, nametag, nameclass, bettag, betclass):
