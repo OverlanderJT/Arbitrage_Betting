@@ -75,16 +75,14 @@ def nba_data():
                 temp2 = temp1[-1 * (j + 1)] + temp2
         temp_names.append(temp2)
 
-    for i in range(len(temp_bets)):
-        odd = singleconvert(temp_bets[i])
+    for i in range(len(temp_bets)): #since temp_bets is too short for some reason (11 as of writing this comment)
+        odd = singleconvert(temp_bets[i]) #the names and bets arrays are messed up. temp_names is 14 long
         if (i % 2 == 0):
             bets1.append(odd)
             names1.append(temp_names[i])
         elif (i % 2 == 1):
             bets2.append(odd)
             names2.append(temp_names[i])
-    print(len(names1))
-    print(len(names2))
     return alphabetize(names1, names2, bets1, bets2)
 
 ####################################################################
