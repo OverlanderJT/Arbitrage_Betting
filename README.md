@@ -4,7 +4,6 @@ Arbitrage betting is a strategy where someone places bets on a team to both win 
 This program is meant to present the user with the information necessary to place bets and make money using arbitrage betting.
 
 Future Plans:
-Need to future proof all code. Have it read in any casino from a seperate text file with all relavent info such as URLs, class names, casino ids, etc.
-Combining all sport_main files into one file for increased efficiency.
-GUI is a work in progress. Will allows for user to choose which sports to find arbs for and view all relavent information in a window. Might allow the user
-to open a window to the
+A new file is created for every single casino. Within the casino file there are functions that collect and manipulate the data for every single sport into 2 names arrays and 2 bets arrays (for sports with only W/L) 2 Names arrays and 3 Bets arrays for sport with W/L/D.
+
+Create an interactive GUI.
