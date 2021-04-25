@@ -2,6 +2,48 @@ import numpy as np
 import xlsxwriter as xl
 from xlsxwriter.utility import xl_rowcol_to_cell
 import pandas as pd
+import urllib.request
+from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
+import time
+
+
+class Casino():
+    nbaname = ''
+    nbabet = ''
+    ufcname = ''
+    ufcbet = ''
+    nhlname = ''
+    nhlbet = ''
+
+    def __init__(self,id,ufcurl,nbaurl,mlburl,nhlurl,):
+        self.id = id
+        self.ufcurl = ufcurl
+        self.nbaurl = nbaurl
+        self.mlburl = mlburl
+        self.nhlurl = nhlurl
+
+
+def javaData(url, nameclass, betclass):
+    options = Options()
+    options.headless = True
+    driver_fd = webdriver.Firefox(options=options)
+    driver_fd.get(url)
+    driver_fd.execute_script(
+        "window.scrollTo(0,document.body.scrollHeight);var lenOfPage=document.body.scrollHeight;return lenOfPage;")
+    time.sleep(15)
+    html_bets = driver_fd.find_elements_by_class_name(betclass)
+    html_names = driver_fd.find_elements_by_class_name(nameclass)
+    return html_names, html_bets
+
+def data(url, nametag, nameclass, bettag, betclass):
+    page_dk = urllib.request.urlopen(url)
+    soup_dk = BeautifulSoup(page_dk, "html.parser")
+    html_bets = soup_dk.find_all(bettag, attrs={"class": betclass})
+    html_names = soup_dk.find_all(nametag, attrs={"class": nameclass})
+    return html_names,html_bets
+
 
 def alphabetize(names1, names2, bets1, bets2):
     #rearranges the fighters so that the first and second names are in alphabetical order

@@ -9,8 +9,6 @@ NHLURL = https://sportsbook.draftkings.com/leagues/hockey/2022?category=game-lin
 Fanduel Sportsbook
 id = fd
 UFCURL = https://sportsbook.fanduel.com/sports/navigation/7287.1/9886.3
-UFCBetClass = 
-UFCNameClass = 
 NHLURL = https://sportsbook.fanduel.com/sports/navigation/1550.1/10329.3
 NBAURL = https://sportsbook.fanduel.com/sports/navigation/830.1/10107.3
 

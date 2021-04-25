@@ -56,6 +56,7 @@ df1 = DataFrame({
     'Arb': nan
 })
 casinos = ['dk','fd','bm']
+
 df1['Max Bet1'] = df1[{'Bet1 dk', 'Bet1 fd', 'Bet1 bm'}].max(axis=1)
 df1['Max Bet1 Casino'] = df1[{'Bet1 dk', 'Bet1 fd', 'Bet1 bm'}].idxmax(axis='columns').str[-2:]
 
