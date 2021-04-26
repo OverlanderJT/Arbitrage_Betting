@@ -9,22 +9,6 @@ from selenium.webdriver.firefox.options import Options
 import time
 
 
-class Casino():
-    nbaname = ''
-    nbabet = ''
-    ufcname = ''
-    ufcbet = ''
-    nhlname = ''
-    nhlbet = ''
-
-    def __init__(self,id,ufcurl,nbaurl,mlburl,nhlurl,):
-        self.id = id
-        self.ufcurl = ufcurl
-        self.nbaurl = nbaurl
-        self.mlburl = mlburl
-        self.nhlurl = nhlurl
-
-
 def javaData(driver, url, nameclass, betclass):
     driver.get(url)
     driver.execute_script(
