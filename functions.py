@@ -29,13 +29,9 @@ def data(url, nametag, nameclass, bettag, betclass):
 def alphabetize(names1, names2, bets1, bets2):
     #rearranges the fighters so that the first and second names are in alphabetical order
     for i in range(len(names1)):
-        tempName = names1[i]
-        tempBet = bets1[i]
         if names1[i] > names2[i]:
-            names1[i] = names2[i]
-            names2[i] = tempName
-            bets1[i] = bets2[i]
-            bets2[i] = tempBet
+            names1[i], names2[i] = names2[i], names1[i] #swaps the names
+            bets1[i], bets2[i] = bets2[i], bets1[i] #swaps the bets
     return names1, names2, bets1, bets2
 
 def singleconvert(odd):
