@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import messagebox
 from tkscrolledframe import ScrolledFrame
 from pandas import *
 from numpy import nan
@@ -104,7 +105,7 @@ gen = Button(root,text="Find Arbs",font=("Arial",20),borderwidth=5,relief='raise
 #Creating the second window to display the arbs (This would be done when the "Find Arbs" button from the main menu is pressed
 root2 = Tk()
 root2.title('Arbs')
-root2.geometry('1400x900')
+# root2.geometry('1400x900')
 
 sf = ScrolledFrame(root2) #making the window scroll if needed
 sf.pack(expand='yes',fill='both')
@@ -147,32 +148,24 @@ for i in range(len(df1)):
 
     if (i*4)+j == len(df1):
         break
+if i > 0:
+    root2width = 1860
+else:
+    root2width = j * 310 + 50
+root2height = (i + 1) * 120 + 100
+root2.geometry('{}x{}'.format(root2width,root2height))
 
 root3 = Tk()
 root3.title('{} vs {}'.format(df1.at[0,'Name1'],df1.at[0,'Name2']))
-root3.geometry('1860x900')
-sf3 = ScrolledFrame(root3)
-sf3.pack(expand='yes',fill='both')
-sf3.bind_arrow_keys(root3)
-sf3.bind_scroll_wheel(root3)
-innerf3 = sf3.display_widget(Frame)
-frame1 = Frame(innerf3)
-frame1.pack(side='top')
-frame1.pack_propagate(0)
-
-
-def switch():
-
-    '''if entryA['state']=='disabled':
-        entryA['state']='normal'
-        entryB['state']='disabled'
-    else:
-        entryB['state'] = 'normal'
-        entryA['state'] = 'disabled'''
-    print(radio.get())
-
-
-radio = IntVar()
+# root3.geometry('1000x700')
+# sf3 = ScrolledFrame(root3)
+# sf3.pack(expand='yes',fill='both')
+# sf3.bind_arrow_keys(root3)
+# sf3.bind_scroll_wheel(root3)
+# innerf3 = sf3.display_widget(Frame).pack()
+# frame1 = Frame(innerf3)
+frame1 = Frame(root3)
+frame1.pack()
 
 gamevs = Label(frame1,text='vs',font=('Arial',40))
 gamevs.grid(row=0,column=1,sticky='n')
@@ -197,19 +190,44 @@ arb = Label(frame1,text='Arb',font=('Arial',30)).grid(row=j+2,column=1,sticky='n
 arbvalue = Label(frame1,text=round(df1.at[0,'Arb value'],4),font=('Arial',25)).grid(row=j+3,column=1,sticky='n')
 ssbutton = Button(frame1, text='Generate Spreadsheet',font=('Arial',15),borderwidth=4).grid(row=j+4,column=1,sticky='n')
 
-frame2 = Frame(innerf3)
-frame2.pack(side='top')
+# frame2 = Frame(innerf3)
+frame2 = Frame(root3)
+frame2.pack()
 
-calcbutton = Button(frame2, text='Calculate',font=('Arial',15),borderwidth=4).grid(row=0,column=2,sticky='n',padx=3,pady=6)
+totalbet = StringVar().set('0')
+betA = 0
+betB = 0
+profitA = 0
+profitB = 0
 
-entryB = Entry(frame2, width=6,font=('Arial',20),state='disabled').grid(row=0,column=3,sticky='nw',padx=3,pady=6)
-radioB = Radiobutton(frame2,variable=radio,value=1,command=switch,text='B',font=('Arial',20)).grid(row=0,column=4,sticky='nw',padx=3,pady=6)
-entryA = Entry(frame2, width=6,font=('Arial',20)).grid(row=0,column=1,sticky='ne',padx=3,pady=6)
-radioA = Radiobutton(frame2,variable=radio,value=0,command=switch,text='A',font=('Arial',20)).grid(row=0,column=0,sticky='ne',padx=3,pady=6)
-profitA = Label(frame2, text='Profit if A wins:',font=('Arial',14)).grid(row=1,column=0,sticky='ne')
-profitA2 = Label(frame2, text='$idk',font=('Arial',14)).grid(row=1,column=1,sticky='nw')
-profitB = Label(frame2, text='Profit if B wins:',font=('Arial',14)).grid(row=1,column=2,columnspan=2,sticky='ne')
-profitB2 = Label(frame2, text='$idk',font=('Arial',14)).grid(row=1,column=4,sticky='nw')
+
+
+def calculatebets():
+    try:
+        float(totalbetentry.get())
+    except ValueError:
+        messagebox.showinfo(parent=root3, message='Invalid Entry. Floats only')
+        return
+    betA = round(float(totalbetentry.get()) / (1 + (float(df1.at[0, 'Max Bet1 Conv']) / float(df1.at[0, 'Max Bet2 Conv']))),2)
+    betB = round(float(totalbetentry.get()) / (1 + (float(df1.at[0, 'Max Bet2 Conv']) / float(df1.at[0, 'Max Bet1 Conv']))),2)
+    profitA = round(betA * (float(df1.at[0, 'Max Bet1 Conv']) - 1) - betB,2)
+    profitB = round(betB * (float(df1.at[0, 'Max Bet2 Conv']) - 1) - betA,2)
+    betAlabel.configure(text='Amount to bet on {}:\n${}'.format(df1.at[0,'Name1'], betA))
+    betBlabel.configure(text='Amount to bet on {}:\n${}'.format(df1.at[0, 'Name2'], betB))
+    profitAlabel.configure(text='Profit if {} wins:\n${}'.format(df1.at[0,'Name1'], profitA))
+    profitBlabel.configure(text='Profit if {} wins:\n${}'.format(df1.at[0, 'Name2'], profitB))
+
+calcbutton = Button(frame2, text='Calculate',font=('Arial',15),borderwidth=4, command=calculatebets).grid(row=1,column=2,sticky='n',padx=3,pady=6)
+totalbetentry = Entry(frame2, width = 7, font=('Arial',20))
+totalbetentry.grid(row=0,column=2,sticky='n',padx=3,pady=6)
+betAlabel = Label(frame2, text='Amount to bet on {}:\n${}'.format(df1.at[0,'Name1'], betA), justify='left',font=('Arial',14))
+betAlabel.grid(row=0,column=0,sticky='nw',padx=3,pady=6)
+betBlabel = Label(frame2, text='Amount to bet on {}:\n${}'.format(df1.at[0,'Name2'], betB), justify='left',font=('Arial',14))
+betBlabel.grid(row=0,column=3,sticky='nw',padx=3,pady=6)
+profitAlabel = Label(frame2, text='Profit if {} wins:\n${}'.format(df1.at[0,'Name1'], profitA), justify='left',font=('Arial',14))
+profitAlabel.grid(row=1,column=0,sticky='nw',padx=3,pady=6)
+profitBlabel = Label(frame2, text='Profit if {} wins:\n${}'.format(df1.at[0,'Name2'], profitB), justify='left',font=('Arial',14))
+profitBlabel.grid(row=1,column=3,sticky='nw',padx=3,pady=6)
 
 
 
