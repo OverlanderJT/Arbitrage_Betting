@@ -7,7 +7,7 @@ def ufc_data():
     options = Options()
     options.headless = True
     driver = webdriver.Firefox(options=options)
-    html_names, html_bets = javaData(driver, "https://sportsbook.fanduel.com/sports/navigation/7287.1/9886.3","selection-name","selectionprice")
+    html_names, html_bets = javaData(driver, "https://sportsbook.fanduel.com/sports/navigation/7287.1/9886.3","selection-name","sh")
     bets1 = []
     bets2 = []
     names1 = []
@@ -30,7 +30,7 @@ def nhl_data():
     options = Options()
     options.headless = True
     driver = webdriver.Firefox(options=options)
-    html_names, html_bets = javaData(driver, "https://sportsbook.fanduel.com/sports/navigation/1550.1/10329.3","name","selectionprice")
+    html_names, html_bets = javaData(driver, "https://sportsbook.fanduel.com/sports/navigation/1550.1/10329.3","name","sh")
     bets1 = []
     bets2 = []
     names1 = []
@@ -65,7 +65,7 @@ def nba_data():
     options = Options()
     options.headless = True
     driver = webdriver.Firefox(options=options)
-    html_names, html_bets = javaData(driver, "https://sportsbook.fanduel.com/sports/navigation/830.1/10107.3", "name","selectionprice")
+    html_names, html_bets = javaData(driver, "https://sportsbook.fanduel.com/sports/navigation/830.1/10107.3", "name","sh")
     bets1 = []
     bets2 = []
     names1 = []
@@ -97,4 +97,4 @@ def nba_data():
     
 ##############################################
 
-#print(nba_data())
+print(nba_data())

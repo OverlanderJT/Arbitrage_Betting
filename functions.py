@@ -36,7 +36,11 @@ def alphabetize(names1, names2, bets1, bets2):
 
 def singleconvert(odd):
     #converts the data from string to the converted odds for future calcs
-    conv = int(odd.replace("+", ""))
+    #If the odd cannot convert the input into a number, it makes the odd -9999
+    try:
+        conv = int(odd.replace("+", ""))
+    except:
+        conv = -9999
     return conv
 
 def makedf_all(df, names1, names2, bets1, bets2, casino, casinolist):
