@@ -94,7 +94,44 @@ def nba_data():
             names2.append(temp2)
     driver.quit()
     return alphabetize(names1, names2, bets1, bets2)
+
+def mlb_data():
+    options = Options()
+    options.headless = True
+    driver = webdriver.Firefox(options=options)
+    html_names, html_bets = javaData(driver, "https://sportsbook.fanduel.com/sports/navigation/1110.1/7627.1", "name","sh")
+    bets1 = []
+    bets2 = []
+    names1 = []
+    names2 = []
+
+    for i in range(len(html_bets)):
+        odd = html_bets[i].text
+        if (i % 6 == 2):
+            odd = singleconvert(odd)
+            bets1.append(odd)
+        elif (i % 6 == 3):
+            odd = singleconvert(odd)
+            bets2.append(odd)
+
+    for i in range(len(html_names)):
+        temp1 = html_names[i].text
+        temp2 = ''
+        for j in range(len(temp1)):
+            if (temp1[-1 * (j + 1)] == " "):
+                break
+            else:
+                temp2 = temp1[-1 * (j + 1)] + temp2
+        if (i % 2 == 0):
+            names1.append(temp2)
+        elif (i % 2 == 1):
+            names2.append(temp2)
+    driver.quit()
+    return alphabetize(names1, names2, bets1, bets2)
     
 ##############################################
 
-print(nba_data())
+test = mlb_data()
+for line in test:
+    print(line)
+

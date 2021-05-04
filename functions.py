@@ -13,7 +13,7 @@ def javaData(driver, url, nameclass, betclass):
     driver.get(url)
     driver.execute_script(
         "window.scrollTo(0,document.body.scrollHeight);var lenOfPage=document.body.scrollHeight;return lenOfPage;")
-    time.sleep(5)
+    time.sleep(10)
     html_bets = driver.find_elements_by_class_name(betclass)
     html_names = driver.find_elements_by_class_name(nameclass)
     return html_names, html_bets
