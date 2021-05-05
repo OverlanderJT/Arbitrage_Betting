@@ -43,13 +43,11 @@ def singleconvert(odd):
         conv = -9999
     return conv
 
-def makedf_all(df, names1, names2, bets1, bets2, casino, casinolist):
+def makedf_all(df, names1, names2, bets1, bets2, casino):
     #adds all of the fights to the final df, combining when it can
 
-    for i in casinolist:
-        if casino == i:
-            bet1 = 'Bet1 {}'.format(i)
-            bet2 = 'Bet2 {}'.format(i)
+    bet1 = 'Bet1 {}'.format(casino)
+    bet2 = 'Bet2 {}'.format(casino)
 
     #compares the df_all to the new df being added. If the fight names match, adds the bets, if not, adds the new fight to the end of the df.
     #this makes it so that this can be used for an infinite amount of casinos (assuming the relavent columns have been added)
@@ -139,14 +137,12 @@ def opss(df):
                 sheet3.write_formula(k + 1, j + 1, '=({}*Sheet1!$C$2)/({}+{})'.format(xl_rowcol_to_cell(0, j + 1),xl_rowcol_to_cell(k + 1, 0),xl_rowcol_to_cell(0, j + 1)))
         wb.close()
 
-def makedf_all3(df, names1, names2, bets1, bets2, bets3, casino,casinolist):
+def makedf_all3(df, names1, names2, bets1, bets2, bets3, casino):
     #adds all of the fights to the final df, combining when it can
 
-    for i in casinolist:
-        if casino == i:
-            bet1 = 'Bet1 {}'.format(i)
-            bet2 = 'Bet2 {}'.format(i)
-            bet3 = 'Bet3 {}'.format(i)
+    bet1 = 'Bet1 {}'.format(casino)
+    bet2 = 'Bet2 {}'.format(casino)
+    bet3 = 'Bet3 {}'.format(casino)
 
     #compares the df_all to the new df being added. If the fight names match, adds the bets, if not, adds the new fight to the end of the df.
     #this makes it so that this can be used for an infinite amount of casinos (assuming the relavent columns have been added)
