@@ -137,7 +137,7 @@ def opss(df):
                 sheet3.write_formula(k + 1, j + 1, '=({}*Sheet1!$C$2)/({}+{})'.format(xl_rowcol_to_cell(0, j + 1),xl_rowcol_to_cell(k + 1, 0),xl_rowcol_to_cell(0, j + 1)))
         wb.close()
 
-def makedf_all3(df, names1, names2, bets1, bets2, bets3, casino):
+def makedf_all3outcome(df, names1, names2, bets1, bets2, bets3, casino):
     #adds all of the fights to the final df, combining when it can
 
     bet1 = 'Bet1 {}'.format(casino)
@@ -157,7 +157,7 @@ def makedf_all3(df, names1, names2, bets1, bets2, bets3, casino):
                 df = df.append({'Team 1': names1[i], bet1: bets1[i], 'Team 2': names2[i], bet2: bets2[i], bet3: bets3[i]},ignore_index=True)
     return df
 
-def arbs3(df,casinolist):
+def arbs3outcome(df,casinolist):
     #finds the max bets
     df['Max Bet1'] = df.iloc[:, 1:len(casinolist) + 1].max(axis=1)
     df['Max Bet1 Casino'] = df.iloc[:, 1:len(casinolist) + 1].idxmax(axis='columns').str[-2:]
@@ -184,7 +184,7 @@ def arbs3(df,casinolist):
 
     return df
 
-def opss3(df):
+def opss3outcome(df):
     tempdf = pd.DataFrame()
     tempdf = tempdf.append(df.loc[df['Arb'] == True], ignore_index=True)
 

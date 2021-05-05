@@ -135,6 +135,3 @@ def mlb_data():
 
 ####################################################################
 
-test = mlb_data()
-for line in test:
-    print(line)

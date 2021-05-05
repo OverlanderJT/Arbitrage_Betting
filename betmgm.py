@@ -266,6 +266,4 @@ def mlb_data():
     return alphabetize(names1, names2, bets1, bets2)
 
 ##########################################################
-test = mlb_data()
-for line in test:
-    print(line)
+
