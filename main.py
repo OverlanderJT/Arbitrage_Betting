@@ -11,12 +11,12 @@ CASINOTAG = ('dk','fd','bm')
 CASINOFUNCTIONTAG = (dk,fd,bm)
 
 #make base dataframes used as reference for all future dataframes shouldn't change
-COLUMNS = {'Team1':[nan],'Max Bet1':[nan],'Max Bet1 Casino':[nan],'Max Bet1 Conv':[nan],'Team2':[nan],'Max Bet2':[nan],'Max Bet2 Casino':[nan],'Max Bet2 Conv':[nan],'Arb Value':[nan],'Arb':[nan]}
-BASEDF = DataFrame(COLUMNS) #base dataframe for sports with 2 outcomes
+COLUMNS = {'Team 1':[nan],'Max Bet1':[nan],'Max Bet1 Casino':[nan],'Max Bet1 Conv':[nan],'Team 2':[nan],'Max Bet2':[nan],'Max Bet2 Casino':[nan],'Max Bet2 Conv':[nan],'Arb Value':[nan],'Arb':[nan]}
+BASEDF = DataFrame(data=COLUMNS) #base dataframe for sports with 2 outcomes
 
-COLUMNSDRAW = {'Team1':[nan],'Max Bet1':[nan],'Max Bet1 Casino':[nan],'Max Bet1 Conv':[nan],'Team2':[nan],'Max Bet2':[nan],'Max Bet2 Casino':[nan],'Max Bet2 Conv':[nan],
+COLUMNSDRAW = {'Team 1':[nan],'Max Bet1':[nan],'Max Bet1 Casino':[nan],'Max Bet1 Conv':[nan],'Team 2':[nan],'Max Bet2':[nan],'Max Bet2 Casino':[nan],'Max Bet2 Conv':[nan],
               'Max Bet Draw':[nan],'Max Bet Draw Casino':[nan],'Max Bet Draw Conv':[nan],'Arb Value':[nan],'Arb':[nan]}
-BASEDFDRAW = DataFrame(COLUMNSDRAW) #base dataframe for sports with 3 outcomes
+BASEDFDRAW = DataFrame(data=COLUMNSDRAW) #base dataframe for sports with 3 outcomes
 
 for casinoindex in range(len(CASINOTAG)):
     BASEDF.insert(1,'Bet1 {}'.format(CASINOTAG[casinoindex]),nan)
@@ -42,10 +42,15 @@ for i in range(len(CASINOFUNCTIONTAG)):
 
 #calculating arbs and generating spreadsheets for each sport. Add one more line 'opss(arbs(sport,CASINOS))' for each additional sport
 #or 'opss3outcome(arbs3outcome(sport,CASINOTAG))'
-opss(arbs(ufc,CASINOTAG))
-opss(arbs(nhl,CASINOTAG))
-opss(arbs(mlb,CASINOTAG))
-opss(arbs(nba,CASINOTAG))
+ufc = arbs(ufc,CASINOTAG)
+nhl = arbs(nhl,CASINOTAG)
+mlb = arbs(mlb,CASINOTAG)
+nba = arbs(nba,CASINOTAG)
+
+opss(ufc)
+opss(nhl)
+opss(mlb)
+opss(nba)
 
 print(ufc)
 print(nhl)
