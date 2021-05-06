@@ -1,9 +1,9 @@
 from functions import *
 from pandas import *
 from numpy import nan
-import draftkings as dk
-import fanduel as fd
-import betmgm as bm
+import casinos.draftkings as dk #need to add 1 import per casino
+import casinos.fanduel as fd
+import casinos.betmgm as bm
 
 
 #casino tags. Add a casino tag for each casino
@@ -12,11 +12,11 @@ CASINOFUNCTIONTAG = [dk,fd,bm]
 
 #make base dataframes used as reference for all future dataframes shouldn't change
 COLUMNS = ['Team1','Max Bet1','Max Bet1 Casino','Max Bet1 Conv','Team2','Max Bet2','Max Bet2 Casino','Max Bet2 Conv','Arb Value','Arb']
-BASEDF = DataFrame(columns=COLUMNS)
+BASEDF = DataFrame(columns=COLUMNS) #base dataframe for sports with 2 outcomes
 
 COLUMNSDRAW = ['Team1','Max Bet1','Max Bet1 Casino','Max Bet1 Conv','Team2','Max Bet2','Max Bet2 Casino','Max Bet2 Conv',
               'Max Bet Draw','Max Bet Draw Casino','Max Bet Draw Conv','Arb Value','Arb']
-BASEDFDRAW = DataFrame(columns=COLUMNSDRAW)
+BASEDFDRAW = DataFrame(columns=COLUMNSDRAW) #base dataframe for sports with 3 outcomes
 
 for casinoindex in range(len(CASINOTAG)):
     BASEDF.insert(1,'Bet1 {}'.format(CASINOTAG[casinoindex]),nan)
