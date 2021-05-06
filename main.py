@@ -1,5 +1,5 @@
 from functions import *
-from pandas import *
+from pandas import DataFrame
 from numpy import nan
 import casinos.draftkings as dk #need to add 1 import per casino
 import casinos.fanduel as fd
@@ -7,15 +7,15 @@ import casinos.betmgm as bm
 
 
 #casino tags. Add a casino tag for each casino
-CASINOTAG = ['dk','fd','bm']
-CASINOFUNCTIONTAG = [dk,fd,bm]
+CASINOTAG = ('dk','fd','bm')
+CASINOFUNCTIONTAG = (dk,fd,bm)
 
 #make base dataframes used as reference for all future dataframes shouldn't change
-COLUMNS = ['Team1','Max Bet1','Max Bet1 Casino','Max Bet1 Conv','Team2','Max Bet2','Max Bet2 Casino','Max Bet2 Conv','Arb Value','Arb']
+COLUMNS = ('Team1','Max Bet1','Max Bet1 Casino','Max Bet1 Conv','Team2','Max Bet2','Max Bet2 Casino','Max Bet2 Conv','Arb Value','Arb')
 BASEDF = DataFrame(columns=COLUMNS) #base dataframe for sports with 2 outcomes
 
-COLUMNSDRAW = ['Team1','Max Bet1','Max Bet1 Casino','Max Bet1 Conv','Team2','Max Bet2','Max Bet2 Casino','Max Bet2 Conv',
-              'Max Bet Draw','Max Bet Draw Casino','Max Bet Draw Conv','Arb Value','Arb']
+COLUMNSDRAW = ('Team1','Max Bet1','Max Bet1 Casino','Max Bet1 Conv','Team2','Max Bet2','Max Bet2 Casino','Max Bet2 Conv',
+              'Max Bet Draw','Max Bet Draw Casino','Max Bet Draw Conv','Arb Value','Arb')
 BASEDFDRAW = DataFrame(columns=COLUMNSDRAW) #base dataframe for sports with 3 outcomes
 
 for casinoindex in range(len(CASINOTAG)):
