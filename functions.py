@@ -194,7 +194,7 @@ def opss3outcome(df):
 
     # for l in range(len(df.loc[df['Arb'] is True].index)):
     for l in range(len(tempdf.index)):
-        wb = xl.Workbook('arbs\{}vs {}.xlsx'.format(tempdf.at[i, 'Team 1'], tempdf.at[i, 'Team 2']))
+        wb = xl.Workbook('arbs\{}vs {}.xlsx'.format(tempdf.at[l, 'Team 1'], tempdf.at[l, 'Team 2']))
         sheet1 = wb.add_worksheet()
 
         # adding the formats used throughout the wb
