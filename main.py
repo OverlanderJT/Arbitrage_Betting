@@ -11,11 +11,11 @@ CASINOTAG = ('dk','fd','bm')
 CASINOFUNCTIONTAG = (dk,fd,bm)
 
 #make base dataframes used as reference for all future dataframes shouldn't change
-COLUMNS = {'Team 1':[nan],'Max Bet1':[nan],'Max Bet1 Casino':[nan],'Max Bet1 Conv':[nan],'Team 2':[nan],'Max Bet2':[nan],'Max Bet2 Casino':[nan],'Max Bet2 Conv':[nan],'Arb':[nan]}
+COLUMNS = {'Team 1':[nan],'Max Bet1':[nan],'Max Bet1 Casino':[nan],'Max Bet1 Conv':[nan],'Team 2':[nan],'Max Bet2':[nan],'Max Bet2 Casino':[nan],'Max Bet2 Conv':[nan]}
 BASEDF = DataFrame(data=COLUMNS) #base dataframe for sports with 2 outcomes
 
 COLUMNSDRAW = {'Team 1':[nan],'Max Bet1':[nan],'Max Bet1 Casino':[nan],'Max Bet1 Conv':[nan],'Team 2':[nan],'Max Bet2':[nan],'Max Bet2 Casino':[nan],'Max Bet2 Conv':[nan],
-              'Max Bet Draw':[nan],'Max Bet Draw Casino':[nan],'Max Bet Draw Conv':[nan],'Arb Value':[nan],'Arb':[nan]}
+              'Max Bet Draw':[nan],'Max Bet Draw Casino':[nan],'Max Bet Draw Conv':[nan]}
 BASEDFDRAW = DataFrame(data=COLUMNSDRAW) #base dataframe for sports with 3 outcomes
 
 for casinoindex in range(len(CASINOTAG)):
