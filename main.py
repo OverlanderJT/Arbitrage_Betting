@@ -25,13 +25,20 @@ for casinoindex in range(len(CASINOTAG)):
 #add one more 'sport = BASEDF' for each additional sport or 'sport = BASEDFDRAW' for any 3 outcome sport
 ufc,nhl,mlb,nba = BASEDF,BASEDF,BASEDF,BASEDF
 
-#making dataframes for each sport. add one more line to the for loop 'sport = makedf_all(sport, CASINOFUNCTIONTAG[i].sport_data(), CASINOTAG[i])' for each additional sport
-#or 'sport = makedf_all3outcome(sport, CASINOFUNCTIONTAG[i].sport_data(), CASINOTAG[i])' for any 3 outcome sport
+#making dataframes for each sport. add two more lines to the for loop
+# names1, names2, bets1, bets2 = CASINOFUNCTIONTAG[i].sport_data() or
+# names1, names2, bets1, bets2, bets3 = CASINOFUNCTIONTAG[i].sport_data() for 3 outcome sport
+# sport = makedf_all(sport, names1, names2, bets1, bets2, CASINOTAG[i]) or
+# sport = makedf_all3outcome(sport, names1, names2, bets1, bets2, bets3, CASINOTAG[i]) for 3 outcome sport
 for i in range(len(CASINOFUNCTIONTAG)):
-    ufc = makedf_all(ufc, CASINOFUNCTIONTAG[i].ufc_data(), CASINOTAG[i])
-    nhl = makedf_all(nhl, CASINOFUNCTIONTAG[i].nhl_data(), CASINOTAG[i])
-    mlb = makedf_all(mlb, CASINOFUNCTIONTAG[i].mlb_data(), CASINOTAG[i])
-    nba = makedf_all(nba, CASINOFUNCTIONTAG[i].nba_data(), CASINOTAG[i])
+    names1, names2, bets1, bets2 = CASINOFUNCTIONTAG[i].ufc_data()
+    ufc = makedf_all(ufc, names1, names2, bets1, bets2, CASINOTAG[i])
+    names1, names2, bets1, bets2 = CASINOFUNCTIONTAG[i].nhl_data()
+    nhl = makedf_all(nhl, names1, names2, bets1, bets2, CASINOTAG[i])
+    names1, names2, bets1, bets2 = CASINOFUNCTIONTAG[i].mlb_data()
+    mlb = makedf_all(mlb, names1, names2, bets1, bets2, CASINOTAG[i])
+    names1, names2, bets1, bets2 = CASINOFUNCTIONTAG[i].nba_data()
+    nba = makedf_all(nba, names1, names2, bets1, bets2, CASINOTAG[i])
 
 #calculating arbs and generating spreadsheets for each sport. Add one more line 'opss(arbs(sport,CASINOS))' for each additional sport
 #or 'opss3outcome(arbs3outcome(sport,CASINOTAG))'
