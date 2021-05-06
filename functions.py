@@ -91,7 +91,7 @@ def opss(df):
     tempdf = tempdf.append(df.loc[df['Arb'] == True], ignore_index=True)
     for i in range(len(df['Max Bet1 Conv'].loc[df['Arb'] == True].index)): #might be able to get rid of the 'Max Bet1' part
 
-        wb = xl.Workbook(tempdf.at[i,'Team 1'] + ' vs ' + tempdf.at[i,'Team 2'] + '.xlsx')
+        wb = xl.Workbook('arbs\ ' + tempdf.at[i,'Team 1'] + ' vs ' + tempdf.at[i,'Team 2'] + '.xlsx')
         sheet1 = wb.add_worksheet()
         sheet2 = wb.add_worksheet()
         sheet3 = wb.add_worksheet()
@@ -195,7 +195,7 @@ def opss3outcome(df):
 
     for l in range(len(df.loc[df['Arb'] == True].index)):
 
-        wb = xl.Workbook(tempdf.at[i, 'Team 1'] + ' vs ' + tempdf.at[i, 'Team 2'] + '.xlsx')
+        wb = xl.Workbook('arbs\ ' + tempdf.at[i, 'Team 1'] + ' vs ' + tempdf.at[i, 'Team 2'] + '.xlsx')
         sheet1 = wb.add_worksheet()
         sheet2 = wb.add_worksheet()
         sheet3 = wb.add_worksheet()
