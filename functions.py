@@ -1,6 +1,5 @@
 import numpy as np
 import xlsxwriter as xl
-from xlsxwriter.utility import xl_rowcol_to_cell
 import pandas as pd
 import urllib.request
 from bs4 import BeautifulSoup

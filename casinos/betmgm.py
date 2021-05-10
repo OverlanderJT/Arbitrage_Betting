@@ -1,13 +1,7 @@
 from functions import *
-from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
 
 
-def ufc_data():
-    options = Options()
-    options.headless = True
-    driver = webdriver.Firefox(options=options)
-    html_names, html_bets = javaData(driver, "https://sports.mi.betmgm.com/en/sports/mma-45","participant","grid-group-container")
+def ufc_data(html_names, html_bets):
     bets1 = []
     bets2 = []
     names1 = []
@@ -63,14 +57,9 @@ def ufc_data():
     del bets1[0]
     del bets2[0]
     
-    driver.quit()
     return alphabetize(names1, names2, bets1, bets2)
 
-def nhl_data():
-    options = Options()
-    options.headless = True
-    driver = webdriver.Firefox(options=options)
-    html_names, html_bets = javaData(driver, "https://sports.mi.betmgm.com/en/sports/ice-hockey-12/betting/north-america-9/nhl-34","participant","grid-group-container")
+def nhl_data(html_names, html_bets):
     bets1 = []
     bets2 = []
     names1 = []
@@ -128,14 +117,10 @@ def nhl_data():
             names1.append(temp2)
         elif (i % 2 == 1):
             names2.append(temp2)
-    driver.quit()
+
     return alphabetize(names1, names2, bets1, bets2)
 
-def nba_data():
-    options = Options()
-    options.headless = True
-    driver = webdriver.Firefox(options=options)
-    html_names, html_bets = javaData(driver, "https://sports.mi.betmgm.com/en/sports/basketball-7/betting/north-america-9/nba-6004","participant","grid-group-container")
+def nba_data(html_names, html_bets):
     bets1 = []
     bets2 = []
     names1 = []
@@ -193,14 +178,10 @@ def nba_data():
             names1.append(temp2)
         elif (i % 2 == 1):
             names2.append(temp2)
-    driver.quit()
+
     return alphabetize(names1, names2, bets1, bets2)
 
-def mlb_data():
-    options = Options()
-    options.headless = True
-    driver = webdriver.Firefox(options=options)
-    html_names, html_bets = javaData(driver, "https://sports.mi.betmgm.com/en/sports/baseball-23/betting/north-america-9/mlb-75","participant","grid-group-container")
+def mlb_data(html_names, html_bets):
     bets1 = []
     bets2 = []
     names1 = []
@@ -262,7 +243,7 @@ def mlb_data():
             names1.append(temp2)
         elif (i % 2 == 1):
             names2.append(temp2)
-    driver.quit()
+
     return alphabetize(names1, names2, bets1, bets2)
 
 ##########################################################

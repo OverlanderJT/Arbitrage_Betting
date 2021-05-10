@@ -1,8 +1,7 @@
 from functions import *
 
 
-def ufc_data():
-    html_names,html_bets = data("https://sportsbook.draftkings.com/leagues/mma/2162?category=fight-lines&subcategory=moneyline","span","sportsbook-outcome-cell__label","span","sportsbook-odds american default-color")
+def ufc_data(html_names, html_bets):
     bets1 = []
     bets2 = []
     names1 = []
@@ -20,8 +19,7 @@ def ufc_data():
     return alphabetize(names1, names2, bets1, bets2)
 
 
-def nhl_data():
-    html_names, html_bets = data("https://sportsbook.draftkings.com/leagues/hockey/2022?category=game-lines&subcategory=game", "span","event-cell__name", "td", "sportsbook-table__column-row")
+def nhl_data(html_names, html_bets):
     bets1 = []
     bets2 = []
     names1 = []
@@ -60,8 +58,7 @@ def nhl_data():
     return alphabetize(names1, names2, bets1, bets2)
 
 
-def nba_data():
-    html_names, html_bets = data("https://sportsbook.draftkings.com/leagues/basketball/103?category=game-lines&subcategory=game", "span","event-cell__name", "span", "sportsbook-odds american default-color")
+def nba_data(html_names, html_bets):
     bets1 = []
     bets2 = []
     names1 = []
@@ -94,8 +91,7 @@ def nba_data():
 
 #This function might only work in the case of the games happening the same day
 #I'm not entirely sure why this one works the way it does, but I'll touch it later
-def mlb_data():
-    html_names, html_bets = data("https://sportsbook.draftkings.com/leagues/baseball/2003?category=game-lines-&subcategory=game", "span","event-cell__name", "td", "sportsbook-table__column-row")
+def mlb_data(html_names, html_bets):
     bets1 = []
     bets2 = []
     names1 = []
