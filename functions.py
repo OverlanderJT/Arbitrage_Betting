@@ -2,37 +2,52 @@ import numpy as np
 import xlsxwriter as xl
 from xlsxwriter.utility import xl_rowcol_to_cell
 import pandas as pd
+import urllib.request
+from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
+import time
+
+
+def javaData(driver, url, nameclass, betclass):
+    driver.get(url)
+    driver.execute_script(
+        "window.scrollTo(0,document.body.scrollHeight);var lenOfPage=document.body.scrollHeight;return lenOfPage;")
+    time.sleep(10)
+    html_bets = driver.find_elements_by_class_name(betclass)
+    html_names = driver.find_elements_by_class_name(nameclass)
+    return html_names, html_bets
+
+def data(url, nametag, nameclass, bettag, betclass):
+    page = urllib.request.urlopen(url)
+    soup = BeautifulSoup(page, "html.parser")
+    html_bets = soup.find_all(bettag, attrs={"class": betclass})
+    html_names = soup.find_all(nametag, attrs={"class": nameclass})
+    return html_names,html_bets
+
 
 def alphabetize(names1, names2, bets1, bets2):
     #rearranges the fighters so that the first and second names are in alphabetical order
     for i in range(len(names1)):
-        tempName = names1[i]
-        tempBet = bets1[i]
         if names1[i] > names2[i]:
-            names1[i] = names2[i]
-            names2[i] = tempName
-            bets1[i] = bets2[i]
-            bets2[i] = tempBet
+            names1[i], names2[i] = names2[i], names1[i] #swaps the names
+            bets1[i], bets2[i] = bets2[i], bets1[i] #swaps the bets
     return names1, names2, bets1, bets2
 
 def singleconvert(odd):
     #converts the data from string to the converted odds for future calcs
-    conv = int(odd.replace("+", ""))
+    #If the odd cannot convert the input into a number, it makes the odd -9999
+    try:
+        conv = int(odd.replace("+", ""))
+    except:
+        conv = -9999
     return conv
 
 def makedf_all(df, names1, names2, bets1, bets2, casino):
     #adds all of the fights to the final df, combining when it can
 
-    #add another elif statement for every new casino to be added
-    if casino == 'fd':
-        bet1 = 'Bet1 fd'
-        bet2 = 'Bet2 fd'
-    elif casino == 'dk':
-        bet1 = 'Bet1 dk'
-        bet2 = 'Bet2 dk'
-    elif casino == 'bm':
-        bet1 = 'Bet1 bm'
-        bet2 = 'Bet2 bm'
+    bet1 = 'Bet1 {}'.format(casino)
+    bet2 = 'Bet2 {}'.format(casino)
 
     #compares the df_all to the new df being added. If the fight names match, adds the bets, if not, adds the new fight to the end of the df.
     #this makes it so that this can be used for an infinite amount of casinos (assuming the relavent columns have been added)
@@ -46,13 +61,15 @@ def makedf_all(df, names1, names2, bets1, bets2, casino):
                 df = df.append({'Team 1': names1[i], bet1: bets1[i], 'Team 2': names2[i], bet2: bets2[i]},ignore_index=True)
     return df
 
-def arbs(df):
+def arbs(df, casinolist):
     #finds the max bets
-    df['Max Bet1'] = df[{'Bet1 dk', 'Bet1 fd', 'Bet1 bm'}].max(axis=1)
-    df['Max Bet1 Casino'] = df[{'Bet1 dk', 'Bet1 fd', 'Bet1 bm'}].idxmax(axis='columns').str[-2:]
+    df['Max Bet1'] = df.iloc[:,1:len(casinolist)+1].max(axis=1)
+    df['Max Bet1 Casino'] = df.iloc[:,1:len(casinolist)+1].idxmax(axis='columns').str[-2:] #if there is an error here, remove '.str[-2:]' and uncomment the line below
+    # df['Max Bet1 Casino'] = df['Max Bet1 Casino'].str[-2:]
 
-    df['Max Bet2'] = df[{'Bet2 dk', 'Bet2 fd', 'Bet2 bm'}].max(axis=1)
-    df['Max Bet2 Casino'] = df[{'Bet2 dk', 'Bet2 fd', 'Bet2 bm'}].idxmax(axis='columns').str[-2:]
+    df['Max Bet2'] = df.iloc[:,(5+len(casinolist)):len(casinolist)+(5+len(casinolist))].max(axis=1)
+    df['Max Bet2 Casino'] = df.iloc[:,(5+len(casinolist)):len(casinolist)+(5+len(casinolist))].idxmax(axis='columns').str[-2:] #if there is an error here, remove '.str[-2:]' and uncomment the line below
+    # df['Max Bet2 Casino'] = df['Max Bet2 Casino'][-2:]
 
     #converts max bets to non american odds
     df.loc[df['Max Bet1'] < 0, 'Max Bet1 Conv'] = (-100 / df['Max Bet1']) + 1
@@ -63,81 +80,70 @@ def arbs(df):
     #calculates arbs and fill NaN values
     df['Arb value'] = (1 / df['Max Bet1 Conv']) + (1 / df['Max Bet2 Conv'])
     df.loc[df['Arb value'] <= 1, 'Arb'] = True
-    values = {'Bet1 dk':0,'Bet1 fd':0,'Bet1 bm':0,'Bet2 dk':0,'Bet2 fd':0,'Bet2 bm':0,'Arb':False}
-    df = df.fillna(value=values)
+    df = df.fillna(value={'Arb':False})
+    df = df.fillna(0)
 
     return df
 
 def opss(df):
     #output spreadsheet for all viable arbs
     tempdf = pd.DataFrame()
-    tempdf = tempdf.append(df.loc[df['Arb'] == True], ignore_index=True)
-    for i in range(len(df['Max Bet1 Conv'].loc[df['Arb'] == True].index)): #might be able to get rid of the 'Max Bet1' part
-
-        wb = xl.Workbook(tempdf.at[i,'Team 1'] + ' vs ' + tempdf.at[i,'Team 2'] + '.xlsx')
+    tempdf = tempdf.append(df.loc[df['Arb'] is True], ignore_index=True)
+    # for i in range(len(df['Max Bet1 Conv'].loc[df['Arb'] is True].index)): #might be able to get rid of the 'Max Bet1' part
+    for i in range(len(tempdf.index)):
+        wb = xl.Workbook('arbs\{}vs {}.xlsx'.format(tempdf.at[i, 'Team 1'], tempdf.at[i, 'Team 2']))
         sheet1 = wb.add_worksheet()
-        sheet2 = wb.add_worksheet()
-        sheet3 = wb.add_worksheet()
 
         # adding the formats used throughout the wb
-        bold = wb.add_format({'bold': True})
         red_format = wb.add_format({'font_color': '#9C0006', 'bg_color': '#FFC7CE'})
         green_format = wb.add_format({'font_color': '#006100', 'bg_color': '#C6EFCE'})
         yellow_format = wb.add_format({'font_color': '#9C5700', 'bg_color': '#FFEB9C'})
+        top_border_format = wb.add_format({'border': 1, 'bottom': 0, 'bold': True})
+        bottom_border_format = wb.add_format({'border': 1, 'top': 0})
+        bottom_border_format_percent = wb.add_format({'border': 1, 'top': 0, 'num_format': '0.00%'})
+        mergeformat = wb.add_format({'border': 1, 'bottom': 0, 'align': 'center', 'valign': 'vcenter', 'bold': True})
+        mergeformat2 = wb.add_format({'border': 1, 'top': 0, 'align': 'center', 'valign': 'vcenter'})
 
-        sheet1.write('B1', tempdf.at[i,'Team 1'], bold)
-        sheet1.write('B2', tempdf.at[i,'Max Bet1 Conv'])
-        sheet1.write('B3', tempdf.at[i,'Max Bet1 Casino'])
-        sheet1.write('C1', tempdf.at[i,'Team 2'], bold)
-        sheet1.write('C2', tempdf.at[i,'Max Bet2 Conv'])
-        sheet1.write('C3', tempdf.at[i,'Max Bet2 Casino'])
+        sheet1.write('B1', tempdf.at[i, 'Team 1'], top_border_format)
+        sheet1.write('B2', tempdf.at[i, 'Max Bet1 Conv'], bottom_border_format)
+        sheet1.write('B3', tempdf.at[i, 'Max Bet1 Casino'], bottom_border_format)
+        sheet1.write('C1', tempdf.at[i, 'Team 2'], top_border_format)
+        sheet1.write('C2', tempdf.at[i, 'Max Bet2 Conv'], bottom_border_format)
+        sheet1.write('C3', tempdf.at[i, 'Max Bet2 Casino'], bottom_border_format)
 
-        sheet1.write('E1', 'Arb', bold)
-        sheet1.write_formula('E2', '=(1/B2) + (1/C2)')
-        sheet1.conditional_format('E2', {'type': 'cell', 'criteria': 'greater than', 'value': 1, 'format': red_format})
-        sheet1.conditional_format('E2', {'type': 'cell', 'criteria': 'between', 'minimum': 0.95, 'maximum': 1,'format': green_format})
-        sheet1.conditional_format('E2', {'type': 'cell', 'criteria': 'less than', 'value': 0.95, 'format': yellow_format})
-        sheet2.conditional_format('B2:U21', {'type': 'cell', 'criteria': '>=', 'value': 1, 'format': green_format})
-        sheet3.conditional_format('B2:U21', {'type': 'cell', 'criteria': '>=', 'value': 1, 'format': green_format})
-        sheet1.conditional_format('C6:V25', {'type': 'cell', 'criteria': '>=', 'value': 1, 'format': green_format})
+        sheet1.write('D1', 'Arb', top_border_format)
+        sheet1.write_formula('D2', '=(1/B2) + (1/C2)', bottom_border_format)
+        # applying the conditional formats
+        sheet1.conditional_format('D2', {'type': 'cell', 'criteria': 'greater than', 'value': 1, 'format': red_format})
+        sheet1.conditional_format('D2', {'type': 'cell', 'criteria': 'between', 'minimum': 0.95, 'maximum': 1, 'format': green_format})
+        sheet1.conditional_format('D2', {'type': 'cell', 'criteria': 'less than', 'value': 0.95, 'format': yellow_format})
 
-        sheet1.write('B5', 'b, a', bold)
-        sheet2.write('A1', 'a', bold)
-        sheet3.write('A1', 'b', bold)
+        sheet1.merge_range('E1:F1', 'Total Bet', mergeformat)
+        sheet1.merge_range('E2:F2', 0, mergeformat2)
 
-        for k in range(20):  # row
-            # add a and b values for each sheet
-            sheet1.write(4, 2 + k, k + 1, bold)
-            sheet1.write(5 + k, 1, k + 1, bold)
-            sheet2.write(0, k + 1, k + 1, bold)
-            sheet2.write(k + 1, 0, k + 1, bold)
-            sheet3.write(0, k + 1, k + 1, bold)
-            sheet3.write(k + 1, 0, k + 1, bold)
+        sheet1.write('B4', 'Bet on {}'.format(tempdf.at[i, 'Team 1']), top_border_format)
+        sheet1.write_formula('B5', '=E2/((B2/C2)+1)', bottom_border_format)
+        sheet1.write('B6', 'Profit if {} wins'.format(tempdf.at[i, 'Team 1']), top_border_format)
+        sheet1.write_formula('B7', '=B5*(B2-1)-C5', bottom_border_format)
+        sheet1.write('C4', 'Bet on {}'.format(tempdf.at[i, 'Team 2']), top_border_format)
+        sheet1.write_formula('C5', '=E2/((C2/B2)+1)', bottom_border_format)
+        sheet1.write('C6', 'Profit if {} wins'.format(tempdf.at[i, 'Team 2']), top_border_format)
+        sheet1.write_formula('C7', '=C5*(C2-1)-B5', bottom_border_format)
 
-            for j in range(20):  # column
-                sheet1.write_formula(k + 5, j + 2,'=IF(AND(Sheet2!{}>=1, Sheet3!{}>=1),1,0)'.format(xl_rowcol_to_cell(k + 1, j + 1),xl_rowcol_to_cell(k + 1, j + 1)))
-                # sheet2.write(k + 1, j + 1, ((k + 1) * tempdf.at[i,'Max Bet1']) / (k + j + 2))
-                sheet2.write_formula(k + 1, j + 1, '=({}*Sheet1!$B$2)/({}+{})'.format(xl_rowcol_to_cell(k + 1, 0),xl_rowcol_to_cell(k + 1, 0),xl_rowcol_to_cell(0, j + 1)))
-                # sheet3.write(k + 1, j + 1, ((j + 1) * tempdf.at[i,'Max Bet2']) / (k + j + 2))
-                sheet3.write_formula(k + 1, j + 1, '=({}*Sheet1!$C$2)/({}+{})'.format(xl_rowcol_to_cell(0, j + 1),xl_rowcol_to_cell(k + 1, 0),xl_rowcol_to_cell(0, j + 1)))
+        sheet1.set_column('B:B', round(len('Profit if {} wins'.format(tempdf.at[i, 'Team 1'])) * 0.9), 0)
+        sheet1.set_column('C:C', round(len('Profit if {} wins'.format(tempdf.at[i, 'Team 2'])) * 0.9), 0)
+
+        sheet1.write('D3', 'Approximate Profit %', top_border_format)
+        sheet1.write_formula('D4', '=((B2*C2)-(B2+C2))/(B2+C2)', bottom_border_format_percent)
+        sheet1.set_column('D:D', 19)
         wb.close()
 
-def makedf_all3(df, names1, names2, bets1, bets2, bets3, casino):
+def makedf_all3outcome(df, names1, names2, bets1, bets2, bets3, casino):
     #adds all of the fights to the final df, combining when it can
 
-    #add another elif statement for every new casino to be added
-    if casino == 'fd':
-        bet1 = 'Bet1 fd'
-        bet2 = 'Bet2 fd'
-        bet3 = 'Bet3 fd'
-    elif casino == 'dk':
-        bet1 = 'Bet1 dk'
-        bet2 = 'Bet2 dk'
-        bet3 = 'Bet3 dk'
-    elif casino == 'bm':
-        bet1 = 'Bet1 bm'
-        bet2 = 'Bet2 bm'
-        bet3 = 'Bet3 bm'
+    bet1 = 'Bet1 {}'.format(casino)
+    bet2 = 'Bet2 {}'.format(casino)
+    bet3 = 'Bet3 {}'.format(casino)
 
     #compares the df_all to the new df being added. If the fight names match, adds the bets, if not, adds the new fight to the end of the df.
     #this makes it so that this can be used for an infinite amount of casinos (assuming the relavent columns have been added)
@@ -152,16 +158,19 @@ def makedf_all3(df, names1, names2, bets1, bets2, bets3, casino):
                 df = df.append({'Team 1': names1[i], bet1: bets1[i], 'Team 2': names2[i], bet2: bets2[i], bet3: bets3[i]},ignore_index=True)
     return df
 
-def arbs3(df):
+def arbs3outcome(df,casinolist):
     #finds the max bets
-    df['Max Bet1'] = df[{'Bet1 dk', 'Bet1 fd', 'Bet1 bm'}].max(axis=1)
-    df['Max Bet1 Casino'] = df[{'Bet1 dk', 'Bet1 fd', 'Bet1 bm'}].idxmax(axis='columns').str[-2:]
+    df['Max Bet1'] = df.iloc[:, 1:len(casinolist) + 1].max(axis=1)
+    df['Max Bet1 Casino'] = df.iloc[:, 1:len(casinolist) + 1].idxmax(axis='columns').str[-2:] #if there is an error here, remove '.str[-2:]' and uncomment the line below
+    # df['Max Bet1 Casino'] = df['Max Bet1 Casino'].str[-2:]
 
-    df['Max Bet2'] = df[{'Bet2 dk', 'Bet2 fd', 'Bet2 bm'}].max(axis=1)
-    df['Max Bet2 Casino'] = df[{'Bet2 dk', 'Bet2 fd', 'Bet2 bm'}].idxmax(axis='columns').str[-2:]
-
-    df['Max Bet3'] = df[{'Bet3 dk', 'Bet3 fd', 'Bet3 bm'}].max(axis=1)
-    df['Max Bet3 Casino'] = df[{'Bet3 dk', 'Bet3 fd', 'Bet3 bm'}].idxmax(axis='columns').str[-2:]
+    df['Max Bet2'] = df.iloc[:, (5 + len(casinolist)):len(casinolist) + (5 + len(casinolist))].max(axis=1)
+    df['Max Bet2 Casino'] = df.iloc[:, (5 + len(casinolist)):len(casinolist) + (5 + len(casinolist))].idxmax(axis='columns').str[-2:] #if there is an error here, remove '.str[-2:]' and uncomment the line below
+    # df['Max Bet2 Casino'] = df['Max Bet2 Casino'].str[-2:]
+    #you will have to change the 5 to something else. Idk what it should be yet
+    df['Max Bet3'] = df.iloc[:, (5 + len(casinolist)):len(casinolist) + (5 + len(casinolist))].max(axis=1)
+    df['Max Bet3 Casino'] = df.iloc[:, (5 + len(casinolist)):len(casinolist) + (5 + len(casinolist))].idxmax(axis='columns').str[-2:] #if there is an error here, remove '.str[-2:]' and uncomment the line below
+    # df['Max Bet3 Casino'] = df['Max Bet3 Casino'].str[-2:]
 
     #converts max bets to non american odds
     df.loc[df['Max Bet1'] < 0, 'Max Bet1 Conv'] = (-100 / df['Max Bet1']) + 1
@@ -174,95 +183,69 @@ def arbs3(df):
     #calculates arbs and fill NaN values
     df['Arb value'] = (1 / df['Max Bet1 Conv']) + (1 / df['Max Bet2 Conv']) + (1 / df['Max Bet3 Conv'])
     df.loc[df['Arb value'] <= 1, 'Arb'] = True
-    values = {'Bet1 dk':0,'Bet1 fd':0,'Bet1 bm':0,'Bet2 dk':0,'Bet2 fd':0,'Bet2 bm':0,'Bet3 dk':0,'Bet3 fd':0,'Bet3 bm':0,'Arb':False}
-    df = df.fillna(value=values)
+    df = df.fillna(value={'Arb': False})
+    df = df.fillna(0)
 
     return df
 
-def opss3(df):
+def opss3outcome(df):
     tempdf = pd.DataFrame()
-    tempdf = tempdf.append(df.loc[df['Arb'] == True], ignore_index=True)
+    tempdf = tempdf.append(df.loc[df['Arb'] is True], ignore_index=True)
 
-    for l in range(len(df.loc[df['Arb'] == True].index)):
-
-        wb = xl.Workbook(tempdf.at[i, 'Team 1'] + ' vs ' + tempdf.at[i, 'Team 2'] + '.xlsx')
+    # for l in range(len(df.loc[df['Arb'] is True].index)):
+    for l in range(len(tempdf.index)):
+        wb = xl.Workbook('arbs\{}vs {}.xlsx'.format(tempdf.at[l, 'Team 1'], tempdf.at[l, 'Team 2']))
         sheet1 = wb.add_worksheet()
-        sheet2 = wb.add_worksheet()
-        sheet3 = wb.add_worksheet()
-        sheet4 = wb.add_worksheet()
 
         # adding the formats used throughout the wb
-        bold = wb.add_format({'bold': True})
         red_format = wb.add_format({'font_color': '#9C0006', 'bg_color': '#FFC7CE'})
         green_format = wb.add_format({'font_color': '#006100', 'bg_color': '#C6EFCE'})
         yellow_format = wb.add_format({'font_color': '#9C5700', 'bg_color': '#FFEB9C'})
+        top_border_format = wb.add_format({'border': 1, 'bottom': 0, 'bold': True})
+        bottom_border_format = wb.add_format({'border': 1, 'top': 0})
+        bottom_border_format_percent = wb.add_format({'border': 1, 'top': 0, 'num_format': '0.00%'})
+        mergeformat = wb.add_format({'border': 1, 'bottom': 0, 'align': 'center', 'valign': 'vcenter', 'bold': True})
+        mergeformat2 = wb.add_format({'border': 1, 'top': 0, 'align': 'center', 'valign': 'vcenter'})
 
-        sheet1.write('B1', tempdf.at[l,'Team 1'], bold)
-        sheet1.write('B2', tempdf.at[l,'Max Bet1 Conv'])
-        sheet1.write('B3', tempdf.at[l,'Max Bet1 Casino'])
-        sheet1.write('C1', tempdf.at[l,'Team 2'], bold)
-        sheet1.write('C2', tempdf.at[l,'Max Bet2 Conv'])
-        sheet1.write('C3', tempdf.at[l,'Max Bet2 Casino'])
-        sheet1.write('D1', 'Tie', bold)
-        sheet1.write('D2', tempdf.at[l,'Max Bet3 Conv'])
-        sheet1.write('D3', tempdf.at[l,'Max Bet3 Casino'])
+        sheet1.write('B1', tempdf.at[l, 'Team 1'], top_border_format)
+        sheet1.write('B2', tempdf.at[l, 'Max Bet1 Conv'], bottom_border_format)
+        sheet1.write('B3', tempdf.at[l, 'Max Bet1 Casino'], bottom_border_format)
+        sheet1.write('C1', tempdf.at[l, 'Team 2'], top_border_format)
+        sheet1.write('C2', tempdf.at[l, 'Max Bet2 Conv'], bottom_border_format)
+        sheet1.write('C3', tempdf.at[l, 'Max Bet2 Casino'], bottom_border_format)
+        sheet1.write('D1', 'Draw', top_border_format)
+        sheet1.write('D2', tempdf.at[l, 'Max Bet3 Conv'], bottom_border_format)
+        sheet1.write('D3', tempdf.at[l, 'Max Bet3 Casino'], bottom_border_format)
 
-        sheet1.write('E1', 'Arb', bold)
-        sheet1.write_formula('E2', '=(1/B2) + (1/C2) + (1/D2)')
+        sheet1.write('E1', 'Arb', top_border_format)
+        sheet1.write_formula('E2', '=(1/B2) + (1/C2) + (1/D2)', bottom_border_format)
         # applying the conditional formats
         sheet1.conditional_format('E2', {'type': 'cell', 'criteria': 'greater than', 'value': 1, 'format': red_format})
-        sheet1.conditional_format('E2', {'type': 'cell', 'criteria': 'between', 'minimum': 0.95, 'maximum': 1,
-                                         'format': green_format})
-        sheet1.conditional_format('E2',
-                                  {'type': 'cell', 'criteria': 'less than', 'value': 0.95, 'format': yellow_format})
-        sheet2.conditional_format('C2:L101', {'type': 'cell', 'criteria': '>=', 'value': 1, 'format': green_format})
-        sheet3.conditional_format('C2:L101', {'type': 'cell', 'criteria': '>=', 'value': 1, 'format': green_format})
-        sheet4.conditional_format('C2:L101', {'type': 'cell', 'criteria': '>=', 'value': 1, 'format': green_format})
-        sheet1.conditional_format('D6:M105', {'type': 'cell', 'criteria': '>=', 'value': 1, 'format': green_format})
+        sheet1.conditional_format('E2', {'type': 'cell', 'criteria': 'between', 'minimum': 0.95, 'maximum': 1, 'format': green_format})
+        sheet1.conditional_format('E2', {'type': 'cell', 'criteria': 'less than', 'value': 0.95, 'format': yellow_format})
 
-        sheet1.write('C5', 'a,b,c', bold)
-        sheet2.write('A1', 'a', bold)
-        sheet2.write('B1', 'b', bold)
-        sheet3.write('A1', 'a', bold)
-        sheet3.write('B1', 'b', bold)
-        sheet4.write('A1', 'a', bold)
-        sheet4.write('B1', 'b', bold)
-        for i in range(10):  # row a
-            # add a and b values for each sheet
-            sheet1.write(4, i + 3, i + 1, bold)
-            sheet2.write(0, i + 2, i + 1, bold)
-            sheet3.write(0, i + 2, i + 1, bold)
-            sheet4.write(0, i + 2, i + 1, bold)
-            for j in range(10):  # row b
-                sheet1.write((j + 5) + (10 * i), 2, j + 1, bold)
-                sheet1.write((j + 5) + (10 * i), 1, i + 1, bold)
-                sheet2.write((j + 1) + (10 * i), 1, j + 1, bold)
-                sheet2.write((j + 1) + (10 * i), 0, i + 1, bold)
-                sheet3.write((j + 1) + (10 * i), 1, j + 1, bold)
-                sheet3.write((j + 1) + (10 * i), 0, i + 1, bold)
-                sheet4.write((j + 1) + (10 * i), 1, j + 1, bold)
-                sheet4.write((j + 1) + (10 * i), 0, i + 1, bold)
+        sheet1.merge_range('F1:G1', 'Total Bet', mergeformat)
+        sheet1.merge_range('F2:G3', 0, mergeformat2)
 
-                for k in range(10):
-                    sheet1.write_formula((j + 5) + (10 * i), k + 3,
-                                         '=IF(AND(Sheet2!{}>=1, Sheet3!{}>=1, Sheet4!{}>=1), 1, 0)'.format(
-                                             xl_rowcol_to_cell((j + 1) + (i * 10), k + 2),
-                                             xl_rowcol_to_cell((j + 1) + (i * 10), k + 2),
-                                             xl_rowcol_to_cell((j + 1) + (i * 10), k + 2)))
-                    sheet2.write_formula((j + 1) + (10 * i), k + 2,
-                                         '=({}*Sheet1!$B$2)/({}+{}+{})'.format(xl_rowcol_to_cell((j + 1) + (i * 10), 0),
-                                                                               xl_rowcol_to_cell((j + 1) + (i * 10), 0),
-                                                                               xl_rowcol_to_cell((j + 1) + (i * 10), 1),
-                                                                               xl_rowcol_to_cell(0, k + 2)))
-                    sheet3.write_formula((j + 1) + (10 * i), k + 2,
-                                         '=({}*Sheet1!$C$2)/({}+{}+{})'.format(xl_rowcol_to_cell((j + 1) + (i * 10), 1),
-                                                                               xl_rowcol_to_cell((j + 1) + (i * 10), 0),
-                                                                               xl_rowcol_to_cell((j + 1) + (i * 10), 1),
-                                                                               xl_rowcol_to_cell(0, k + 2)))
-                    sheet4.write_formula((j + 1) + (10 * i), k + 2,
-                                         '=({}*Sheet1!$D$2)/({}+{}+{})'.format(xl_rowcol_to_cell(0, k + 2),
-                                                                               xl_rowcol_to_cell((j + 1) + (i * 10), 0),
-                                                                               xl_rowcol_to_cell((j + 1) + (i * 10), 1),
-                                                                               xl_rowcol_to_cell(0, k + 2)))
+        sheet1.write('B4', 'Bet on {}'.format(tempdf.at[l, 'Team 1']), top_border_format)
+        sheet1.write_formula('B5', '=F2/((B2/C2)+(B2/D2)+1)', bottom_border_format)
+        sheet1.write('B6', 'Profit if {} wins'.format(tempdf.at[l, 'Team 1']), top_border_format)
+        sheet1.write_formula('B7', '=B5*(B2-1)-C5-D5', bottom_border_format)
+        sheet1.write('C4', 'Bet on {}'.format(tempdf.at[l, 'Team 2']), top_border_format)
+        sheet1.write_formula('C5', '=F2/((C2/B2)+(C2/D2)+1)', bottom_border_format)
+        sheet1.write('C6', 'Profit if {} wins'.format(tempdf.at[l, 'Team 2']), top_border_format)
+        sheet1.write_formula('C7', '=C5*(C2-1)-B5-D5', bottom_border_format)
+        sheet1.write('D4', 'Bet on Draw', top_border_format)
+        sheet1.write_formula('D5', '=F2/((D2/B2)+(D2/C2)+1)', bottom_border_format)
+        sheet1.write('D6', 'Profit if they draw', top_border_format)
+        sheet1.write_formula('D7', '=D5*(D2-1)-B5-C5', bottom_border_format)
+
+        sheet1.set_column('B:B', round(len('Profit if {} wins'.format(tempdf.at[l, 'Team 1'])) * 0.9), 0)
+        sheet1.set_column('C:C', round(len('Profit if {} wins'.format(tempdf.at[l, 'Team 2'])) * 0.9), 0)
+        sheet1.set_column('D:D', round(len('Profit if they tie') * 0.9), 0)
+
+        sheet1.write('E3', 'Approximate Profit %', top_border_format)
+        sheet1.write_formula('E4', '=((B2*C2*D2)-(B2*C2)-(B2*D2)-(C2*D2))/((B2*C2)+(B2*D2)+(C2*D2))', bottom_border_format_percent)
+        sheet1.set_column('E:E', 19)
 
         wb.close()

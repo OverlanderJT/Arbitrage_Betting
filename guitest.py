@@ -1,9 +1,10 @@
 from tkinter import *
+from tkinter import messagebox
 from tkscrolledframe import ScrolledFrame
 from pandas import *
-import numpy as np
+from numpy import nan
 
-#test change asd
+
 def selectall():
     var1.set(1)
     var2.set(1)
@@ -37,25 +38,108 @@ def getarb():
         print('NFL')
 
 
+def expandgame(row, column, df):
+    dataframeindex = (row * 6) + column
+    name1 = df.at[dataframeindex, 'Name1']
+    name2 = df.at[dataframeindex, 'Name2']
+    maxbet1 = df.at[dataframeindex, 'Max Bet1 Conv']
+    maxbet2 = df.at[dataframeindex, 'Max Bet2 Conv']
+
+    def calculatebets():
+        try:
+            float(totalbetentry.get())
+        except ValueError:
+            messagebox.showinfo(parent=expandroot, message='Invalid Entry. Float numbers only')
+            return
+        betA = round(float(totalbetentry.get()) / (1 + (float(maxbet1) / float(maxbet2))), 2)
+        betB = round(float(totalbetentry.get()) / (1 + (float(maxbet2) / float(maxbet1))), 2)
+        profitA = round(betA * (float(maxbet1) - 1) - betB, 2)
+        profitB = round(betB * (float(maxbet2) - 1) - betA, 2)
+        betAlabel.configure(text='Amount to bet on {}:\n${}'.format(name1, betA))
+        betBlabel.configure(text='Amount to bet on {}:\n${}'.format(name2, betB))
+        profitAlabel.configure(text='Profit if {} wins:\n${}'.format(name1, profitA))
+        profitBlabel.configure(text='Profit if {} wins:\n${}'.format(name2, profitB))
+
+    expandroot = Tk()
+    expandroot.title('{} vs {}'.format(name1, name2))
+    # expandroot.geometry('1000x700')
+    # sf3 = ScrolledFrame(expandroot)
+    # sf3.pack(expand='yes',fill='both')
+    # sf3.bind_arrow_keys(expandroot)
+    # sf3.bind_scroll_wheel(expandroot)
+    # innerf3 = sf3.display_widget(Frame).pack()
+    # frame1 = Frame(innerf3)
+    frame1 = Frame(expandroot)
+    frame1.pack()
+
+    gamevs = Label(frame1, text='vs', font=('Arial', 40))
+    gamevs.grid(row=0, column=1, sticky='n')
+    labelname1 = Label(frame1, text='{}'.format(name1), font=('Arial', 40))
+    labelname1.grid(row=0, column=0, sticky='ne')
+    labelname2 = Label(frame1, text='{}'.format(name2), font=('Arial', 40))
+    labelname2.grid(row=0, column=2, sticky='nw')
+
+    for j in range(len(casinos)):
+        labelbet1 = Label(frame1, text=df.at[dataframeindex, 'Bet1 {}'.format(casinos[j])], font=('Arial', 30))
+        labelbet1.grid(row=1 + j, column=0, sticky='ne')
+        if labelbet1['text'] == str(df.at[dataframeindex, 'Max Bet1']):
+            labelbet1.configure(relief='groove', borderwidth=4)
+        labelcasino = Label(frame1, text='{}'.format(casinos[j]), font=('Arial', 30))
+        labelcasino.grid(row=1 + j, column=1, sticky='n')
+        labelbet2 = Label(frame1, text=df.at[dataframeindex, 'Bet2 {}'.format(casinos[j])], font=('Arial', 30))
+        labelbet2.grid(row=1 + j, column=2, sticky='nw')
+        if labelbet2['text'] == str(df.at[dataframeindex, 'Max Bet2']):
+            labelbet2.configure(relief='groove', borderwidth=4)
+
+    arb = Label(frame1, text='Arb', font=('Arial', 30)).grid(row=j + 2, column=1, sticky='n')
+    arbvalue = Label(frame1, text=round(df1.at[0, 'Arb value'], 4), font=('Arial', 25)).grid(row=j + 3, column=1, sticky='n')
+    ssbutton = Button(frame1, text='Generate Spreadsheet', font=('Arial', 15), borderwidth=4).grid(row=j + 4, column=1, sticky='n')
+    # frame2 = Frame(innerf3)
+    frame2 = Frame(expandroot)
+    frame2.pack()
+
+    totalbet = StringVar().set('0')
+    betA = 0
+    betB = 0
+    profitA = 0
+    profitB = 0
+
+    calcbutton = Button(frame2, text='Calculate', font=('Arial', 15), borderwidth=4, command=calculatebets).grid(row=1, column=2, sticky='n', padx=3, pady=6)
+    totalbetentry = Entry(frame2, width=7, font=('Arial', 20))
+    totalbetentry.grid(row=0, column=2, sticky='n', padx=3, pady=6)
+    betAlabel = Label(frame2, text='Amount to bet on {}:\n${}'.format(name1, betA), justify='left', font=('Arial', 14))
+    betAlabel.grid(row=0, column=0, sticky='nw', padx=3, pady=6)
+    betBlabel = Label(frame2, text='Amount to bet on {}:\n${}'.format(name2, betB), justify='left', font=('Arial', 14))
+    betBlabel.grid(row=0, column=3, sticky='nw', padx=3, pady=6)
+    profitAlabel = Label(frame2, text='Profit if {} wins:\n${}'.format(name1, profitA), justify='left', font=('Arial', 14))
+    profitAlabel.grid(row=1, column=0, sticky='nw', padx=3, pady=6)
+    profitBlabel = Label(frame2, text='Profit if {} wins:\n${}'.format(name2, profitB), justify='left', font=('Arial', 14))
+    profitBlabel.grid(row=1, column=3, sticky='nw', padx=3, pady=6)
+
+    expandroot.mainloop()
+
+
+
+
 df1 = DataFrame({
     'Name1': ['Bob', 'John', 'Billy', 'Nathan', 'Sam'],
     'Bet1 fd': [125, 195, -115, -175, 270],
     'Bet1 dk': [130, 200, -130, -180, 285],
     'Bet1 bm': [135, 185, -110, -165, 280],
-    'Max Bet1': np.nan,
-    'Max Bet1 Casino': np.nan,
-    'Max Bet1 Conv': np.nan,
+    'Max Bet1': nan,
+    'Max Bet1 Casino': nan,
+    'Max Bet1 Conv': nan,
     'Name2': ['Chris', 'Romeo', 'Blake', 'Philip', 'Jake'],
     'Bet2 fd': [-110, -180, 130, 180, -220],
     'Bet2 dk': [-120, -170, 110, 175, -225],
     'Bet2 bm': [-115, -165, 115, 170, -230],
-    'Max Bet2': np.nan,
-    'Max Bet2 Casino': np.nan,
-    'Max Bet2 Conv': np.nan,
-    'Arb value': np.nan,
-    'Arb': np.nan
+    'Max Bet2': nan,
+    'Max Bet2 Casino': nan,
+    'Max Bet2 Conv': nan,
+    'Arb value': nan,
+    'Arb': nan
 })
-
+casinos = ['dk','fd','bm']
 
 df1['Max Bet1'] = df1[{'Bet1 dk', 'Bet1 fd', 'Bet1 bm'}].max(axis=1)
 df1['Max Bet1 Casino'] = df1[{'Bet1 dk', 'Bet1 fd', 'Bet1 bm'}].idxmax(axis='columns').str[-2:]
@@ -104,7 +188,7 @@ gen = Button(root,text="Find Arbs",font=("Arial",20),borderwidth=5,relief='raise
 #Creating the second window to display the arbs (This would be done when the "Find Arbs" button from the main menu is pressed
 root2 = Tk()
 root2.title('Arbs')
-root2.geometry('1400x900')
+# root2.geometry('1400x900')
 
 sf = ScrolledFrame(root2) #making the window scroll if needed
 sf.pack(expand='yes',fill='both')
@@ -115,100 +199,51 @@ innerf = sf.display_widget(Frame)
 lf2 = LabelFrame(innerf,text='UFC',font=("Arial",20))
 lf2.pack(fill='both',expand='yes',pady=10,padx=15)
 
-for i in range(len(df1)):
-    for j in range(6):
-        if (i*4)+j == len(df1):
+for row in range(len(df1)):
+    for column in range(6):
+        if (row*4)+column == len(df1):
             break
         frame = LabelFrame(lf2,width=290,height=110)
-        frame.grid(row=i,column=j,pady=5,padx=10)
+        frame.grid(row=row,column=column,pady=5,padx=10)
         frame.pack_propagate(0)
 
-        name1 = Label(frame, text='{}'.format(df1.at[(i*4)+j,'Name1']),font=("Arial",20))
-        name1.place(relx=0.44, rely=0, anchor='ne')
+        name1label = Label(frame, text='{}'.format(df1.at[(row*4)+column,'Name1']),font=("Arial",20))
+        name1label.place(relx=0.44, rely=0, anchor='ne')
         vs = Label(frame, text='vs', font=("Arial", 20))
         vs.place(relx=0.5,rely=0,anchor='n')
-        name2 = Label(frame, text='{}'.format(df1.at[(i * 4) + j, 'Name2']), font=("Arial", 20))
-        name2.place(relx=0.56, rely=0, anchor='nw')
+        name2label = Label(frame, text='{}'.format(df1.at[(row * 4) + column, 'Name2']), font=("Arial", 20))
+        name2label.place(relx=0.56, rely=0, anchor='nw')
 
-        l2 = Label(frame,text='{}  {}'.format(df1.at[(i*4)+j,'Max Bet1'],df1.at[(i*4)+j,'Max Bet1 Casino']),font=("Arial",14))
+        l2 = Label(frame,text='{}  {}'.format(df1.at[(row*4)+column,'Max Bet1'],df1.at[(row*4)+column,'Max Bet1 Casino']),font=("Arial",14))
         l2.place(relx=0.44, rely=0.325, anchor='ne')
 
-        l3 = Label(frame, text='{}  {}'.format(df1.at[(i * 4) + j, 'Max Bet2'], df1.at[(i * 4) + j, 'Max Bet2 Casino']),font=("Arial",14))
+        l3 = Label(frame, text='{}  {}'.format(df1.at[(row * 4) + column, 'Max Bet2'], df1.at[(row * 4) + column, 'Max Bet2 Casino']),font=("Arial",14))
         l3.place(relx=0.56, rely=0.325, anchor='nw')
 
-        button = Button(frame,text='Expand')
+        rowlabel = Label(frame, text=row)
+        rowlabel.place(relx=0.25,rely=1,anchor='sw')
+        columnlabel = Label(frame, text=column)
+        columnlabel.place(relx=0.75,rely=1,anchor='se')
+
+        button = Button(frame,text='Expand',command=lambda: expandgame(rowlabel['text'],columnlabel['text'],df1))
         button.place(relx=0.5,rely=1,anchor='s')
 
-        l4 = Label(frame, text=round(df1.at[(i * 4) + j, 'Arb value'],4),font=('Arial',12,'bold'))
+        l4 = Label(frame, text=round(df1.at[(row * 4) + column, 'Arb value'],4),font=('Arial',12,'bold'))
         l4.place(relx=0.5,rely=0.8,anchor='s')
 
         l5 = Label(frame,text='Arb',font=('Arial',10,'bold'))
         l5.place(relx=0.5,rely=0.625,anchor='s')
 
-    if (i*4)+j == len(df1):
+    if (row*4)+column == len(df1):
         break
-
-root3 = Tk()
-root3.title('{} vs {}'.format(df1.at[0,'Name1'],df1.at[0,'Name2']))
-root3.geometry('1860x900')
-sf3 = ScrolledFrame(root3)
-sf3.pack(expand='yes',fill='both')
-sf3.bind_arrow_keys(root3)
-sf3.bind_scroll_wheel(root3)
-innerf3 = sf3.display_widget(Frame)
-frame1 = Frame(innerf3,width=1900,height=475,bd=5)
-frame1.pack(side='top')
-frame1.pack_propagate(0)
+if row > 0:
+    root2width = 1860
+else:
+    root2width = column * 310 + 50
+root2height = (row + 1) * 120 + 100
+root2.geometry('{}x{}'.format(root2width,root2height))
 
 
-def switch():
-
-    '''if entryA['state']=='disabled':
-        entryA['state']='normal'
-        entryB['state']='disabled'
-    else:
-        entryB['state'] = 'normal'
-        entryA['state'] = 'disabled'''
-    print(radio.get())
-
-
-radio = IntVar()
-
-gamevs = Label(frame1,text='vs',font=('Arial',40))
-gamevs.place(relx=0.5,rely=0,anchor='n')
-labelname1 = Label(frame1, text='{}'.format(df1.at[0,'Name1']),font=('Arial',40))
-labelname1.place(relx=0.45,rely=0,anchor='ne')
-labelname2 = Label(frame1, text='{}'.format(df1.at[0,'Name2']),font=('Arial',40))
-labelname2.place(relx=0.55,rely=0,anchor='nw')
-fdlabel = Label(frame1,text='fd',font=('Arial',30)).place(relx=0.5,rely=0.175,anchor='n')
-dklabel = Label(frame1,text='dk',font=('Arial',30)).place(relx=0.5,rely=0.29,anchor='n')
-bmlabel = Label(frame1,text='bm',font=('Arial',30)).place(relx=0.5,rely=0.405,anchor='n')
-arb = Label(frame1,text='Arb',font=('Arial',30)).place(relx=0.5,rely=0.55,anchor='n')
-arbvalue = Label(frame1,text=round(df1.at[0,'Arb value'],4),font=('Arial',25)).place(relx=0.5,rely=0.64,anchor='n')
-ssbutton = Button(frame1, text='Generate Spreadsheet',font=('Arial',15),borderwidth=4).place(relx=0.5,rely=0.75,anchor='n')
-calcbutton = Button(frame1, text='Calculate',font=('Arial',15),borderwidth=4).place(relx=0.5,rely=1,anchor='s')
-
-entryB = Entry(frame1, width=6,font=('Arial',20),state='disabled').place(relx=0.535,rely=1,anchor='sw')
-radioB = Radiobutton(frame1,variable=radio,value=1,command=switch,text='B',font=('Arial',20)).place(relx=0.585,rely=1,anchor='sw')
-entryA = Entry(frame1, width=6,font=('Arial',20)).place(relx=0.465,rely=1,anchor='se')
-radioA = Radiobutton(frame1,variable=radio,value=0,command=switch,text='A',font=('Arial',20)).place(relx=0.415,rely=1,anchor='se')
-
-
-
-for j in range(3):
-    labelbet1 = Label(frame1,text=df1.iat[0,j+1],font=('Arial',30))
-    labelbet1.place(relx=0.45,rely=(0.175+(j*0.115)),anchor='ne')
-    if labelbet1['text'] == str(df1.at[0,'Max Bet1']):
-        labelbet1.configure(relief='groove',borderwidth=4)
-    labelbet2 = Label(frame1, text=df1.iat[0, j + 8], font=('Arial', 30))
-    labelbet2.place(relx=0.55, rely=(0.175 + (j * 0.115)), anchor='nw')
-    if labelbet2['text'] == str(df1.at[0,'Max Bet2']):
-        labelbet2.configure(relief='groove',borderwidth=4)
-
-
-
-
-root3.mainloop()
 root2.mainloop()
 
 root.mainloop()
