@@ -21,6 +21,9 @@ BASEDFDRAW = DataFrame(data=COLUMNSDRAW) #base dataframe for sports with 3 outco
 for casinoindex in range(len(CASINOTAG)):
     BASEDF.insert(1,'Bet1 {}'.format(CASINOTAG[casinoindex]),nan)
     BASEDF.insert(casinoindex+6,'Bet2 {}'.format(CASINOTAG[casinoindex]),nan)
+    BASEDFDRAW.insert(1,'Bet1 {}'.format(CASINOTAG[casinoindex]),nan)
+    BASEDFDRAW.insert(casinoindex+6,'Bet2 {}'.format(CASINOTAG[casinoindex]),nan)
+    # BASEDFDRAW.insert(casinoindex+?,'Bet3 {}'.format(CASINOTAG[casinoindex]),nan) #don't know what the ? needs to be
 
 #add one more 'sport = BASEDF' for each additional sport or 'sport = BASEDFDRAW' for any 3 outcome sport
 ufc,nhl,mlb,nba = BASEDF,BASEDF,BASEDF,BASEDF
