@@ -109,8 +109,7 @@ driver.get('https://www.google.com/') #basically initializes the window with thi
 for casino in CASINO_TAG:
     print('Opening ' + casino)
     for sport in usersports:
-        driver.execute_script('window.open("about:blank","{}");'.format(casino + sport))
-        driver.switch_to.window(casino + sport)
+        driver.switch_to.new_window(casino + sport)
         driver.get(ALL_HTML_DATA[casino + sport][0])
 print('Loading in Web Pages')
 time.sleep(45)
