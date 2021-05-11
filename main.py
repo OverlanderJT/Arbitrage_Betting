@@ -1,6 +1,6 @@
 from pandas import DataFrame
 from numpy import nan
-from functions import (makedf_all, makedf_all3outcome, arbs, arbs3outcome, opss, opss3outcome)
+from functions import makedf_all, makedf_all3outcome, arbs, arbs3outcome, opss, opss3outcome
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 import time
@@ -20,7 +20,7 @@ html_names = {
     'fdmlbnames':[],
     'fdnhlnames':[],
     'fdnbanames':[],
-    
+
     'bmufcnames':[],
     'bmmlbnames':[],
     'bmnhlnames':[],
@@ -153,21 +153,38 @@ for casino in CASINO_TAG:
         #need to add another elif statement for each new sport
         if sport == 'ufc':
             names1, names2, bets1, bets2 = CASINO_TAG[casino].ufc_data(html_names[casino + sport + 'names'], html_bets[casino + sport + 'bets'])
+            SPORTS[sport] = makedf_all(SPORTS[sport], names1, names2, bets1, bets2, casino)
         elif sport == 'mlb':
             names1, names2, bets1, bets2 = CASINO_TAG[casino].mlb_data(html_names[casino + sport + 'names'], html_bets[casino + sport + 'bets'])
+            SPORTS[sport] = makedf_all(SPORTS[sport], names1, names2, bets1, bets2, casino)
         elif sport == 'nba':
             names1, names2, bets1, bets2 = CASINO_TAG[casino].nba_data(html_names[casino + sport + 'names'], html_bets[casino + sport + 'bets'])
+            SPORTS[sport] = makedf_all(SPORTS[sport], names1, names2, bets1, bets2, casino)
         elif sport == 'nhl':
             names1, names2, bets1, bets2 = CASINO_TAG[casino].nhl_data(html_names[casino + sport + 'names'], html_bets[casino + sport + 'bets'])
-        
-        SPORTS[sport] = makedf_all(SPORTS[sport], names1, names2, bets1, bets2, casino)
+            SPORTS[sport] = makedf_all(SPORTS[sport], names1, names2, bets1, bets2, casino)
+        else:
+            print('Unimplemented Sport')
 
 #calculate the arbs for each sport and generate the spreadsheets
 for casino in CASINO_TAG:
     print('Calculating ' + casino + ' arbs')
     for sport in usersports:
-        SPORTS[sport] = arbs(SPORTS[sport],CASINO_TAG)
-        opss(SPORTS[sport])
+        #need to add another elif statement for each new sport
+        if sport == 'ufc':
+            SPORTS[sport] = arbs(SPORTS[sport],CASINO_TAG)
+            opss(SPORTS[sport])
+        elif sport == 'mlb':
+            SPORTS[sport] = arbs(SPORTS[sport],CASINO_TAG)
+            opss(SPORTS[sport])
+        elif sport == 'nba':
+            SPORTS[sport] = arbs(SPORTS[sport],CASINO_TAG)
+            opss(SPORTS[sport])
+        elif sport == 'nhl':
+            SPORTS[sport] = arbs(SPORTS[sport],CASINO_TAG)
+            opss(SPORTS[sport])
+        else:
+            print('Unimplemented Sport')
 
 for sport in usersports:
     print(SPORTS[sport])

@@ -1,11 +1,6 @@
-import numpy as np
+from numpy import nan
 import xlsxwriter as xl
 import pandas as pd
-import urllib.request
-from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
-import time
 
 
 def alphabetize(names1, names2, bets1, bets2):
