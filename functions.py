@@ -8,23 +8,6 @@ from selenium.webdriver.firefox.options import Options
 import time
 
 
-def javaData(driver, url, nameclass, betclass):
-    driver.get(url)
-    driver.execute_script(
-        "window.scrollTo(0,document.body.scrollHeight);var lenOfPage=document.body.scrollHeight;return lenOfPage;")
-    time.sleep(10)
-    html_bets = driver.find_elements_by_class_name(betclass)
-    html_names = driver.find_elements_by_class_name(nameclass)
-    return html_names, html_bets
-
-def data(url, nametag, nameclass, bettag, betclass):
-    page = urllib.request.urlopen(url)
-    soup = BeautifulSoup(page, "html.parser")
-    html_bets = soup.find_all(bettag, attrs={"class": betclass})
-    html_names = soup.find_all(nametag, attrs={"class": nameclass})
-    return html_names,html_bets
-
-
 def alphabetize(names1, names2, bets1, bets2):
     #rearranges the fighters so that the first and second names are in alphabetical order
     for i in range(len(names1)):
@@ -90,7 +73,7 @@ def opss(df):
     tempdf = tempdf.append(df.loc[df['Arb'] is True], ignore_index=True)
     # for i in range(len(df['Max Bet1 Conv'].loc[df['Arb'] is True].index)): #might be able to get rid of the 'Max Bet1' part
     for i in range(len(tempdf.index)):
-        wb = xl.Workbook('arbs\{}vs {}.xlsx'.format(tempdf.at[i, 'Team 1'], tempdf.at[i, 'Team 2']))
+        wb = xl.Workbook('arbs\{} vs {}.xlsx'.format(tempdf.at[i, 'Team 1'], tempdf.at[i, 'Team 2']))
         sheet1 = wb.add_worksheet()
 
         # adding the formats used throughout the wb
@@ -193,7 +176,7 @@ def opss3outcome(df):
 
     # for l in range(len(df.loc[df['Arb'] is True].index)):
     for l in range(len(tempdf.index)):
-        wb = xl.Workbook('arbs\{}vs {}.xlsx'.format(tempdf.at[l, 'Team 1'], tempdf.at[l, 'Team 2']))
+        wb = xl.Workbook('arbs\{} vs {}.xlsx'.format(tempdf.at[l, 'Team 1'], tempdf.at[l, 'Team 2']))
         sheet1 = wb.add_worksheet()
 
         # adding the formats used throughout the wb

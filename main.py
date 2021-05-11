@@ -1,6 +1,6 @@
-from pandas import *
+from pandas import DataFrame
 from numpy import nan
-from functions import *
+from functions import (makedf_all, makedf_all3outcome, arbs, arbs3outcome, opss, opss3outcome)
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 import time
@@ -50,7 +50,7 @@ html_bets = {
 usersports = [
     'ufc',
     'mlb',
-    'nhl',
+    # 'nhl',
     'nba'
 ]
 
@@ -77,6 +77,24 @@ ALL_HTML_DATA = {
     'bmmlb':('https://sports.mi.betmgm.com/en/sports/baseball-23/betting/north-america-9/mlb-75','participant','grid-group-container'),
     'bmnhl':('https://sports.mi.betmgm.com/en/sports/ice-hockey-12/betting/north-america-9/nhl-34','participant','grid-group-container'),
     'bmnba':('https://sports.mi.betmgm.com/en/sports/basketball-7/betting/north-america-9/nba-6004','participant','grid-group-container'),
+}
+
+#stores the window handles to access the windows for each sport and casino later. have to add more for each new casino and sport
+window_handles = {
+    'dkufc':[],
+    'dkmlb':[],
+    'dknhl':[],
+    'dknba':[],
+
+    'fdufc':[],
+    'fdmlb':[],
+    'fdnhl':[],
+    'fdnba':[],
+
+    'bmufc':[],
+    'bmmlb':[],
+    'bmnhl':[],
+    'bmnba':[],
 }
 
 COLUMNS = {'Team 1':[nan],'Max Bet1':[nan],'Max Bet1 Casino':[nan],'Max Bet1 Conv':[nan],'Team 2':[nan],'Max Bet2':[nan],'Max Bet2 Casino':[nan],'Max Bet2 Conv':[nan]}
@@ -111,14 +129,17 @@ for casino in CASINO_TAG:
     for sport in usersports:
         driver.switch_to.new_window(casino + sport)
         driver.get(ALL_HTML_DATA[casino + sport][0])
+        window_handles[casino + sport] = driver.current_window_handle
 print('Loading in Web Pages')
-time.sleep(45)
+time.sleep(25)
 
 #get the data from the urls
 for casino in CASINO_TAG:
     print('Reading in ' + casino + ' data')
     for sport in usersports:
-        driver.switch_to.window(casino + sport)
+        print(driver.current_window_handle)
+        print(window_handles[casino + sport])
+        driver.switch_to.window(window_handles[casino + sport])
         html_bets[casino + sport + 'bets'] = driver.find_elements_by_class_name(ALL_HTML_DATA[casino + sport][2])
         html_names[casino + sport + 'names'] = driver.find_elements_by_class_name(ALL_HTML_DATA[casino + sport][1])
 driver.quit()
