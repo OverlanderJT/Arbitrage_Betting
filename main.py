@@ -46,7 +46,7 @@ html_bets = {
 }
 
 #this can change depending on what sport(s) the user wants.
-#i.e. this user only wants ufc and mlb
+#i.e. this user only wants ufc, mlb, and nba
 usersports = [
     'ufc',
     'mlb',
@@ -109,14 +109,13 @@ for casinoindex in range(len(CASINO_TAG)):
     BASEDFDRAW.insert(casinoindex+6,'Bet2 {}'.format(list(CASINO_TAG.keys())[casinoindex]),nan)
     # BASEDFDRAW.insert(casinoindex+?,'Bet3 {}'.format(list(CASINO_TAG.keys())[casinoindex]),nan) #don't know what the ? needs to be
 
-#need to add the sport to the line below, and the sport to the SPORTS dictionary with its new DF and function
-ufc, mlb, nhl, nba = BASEDF, BASEDF, BASEDF, BASEDF
-SPORTS = {
-    'ufc':ufc, 
-    'mlb':mlb, 
-    'nhl':nhl, 
-    'nba':nba
-}
+#need to add the sport to the dict below with its base dataframe
+SPORTS = dict(
+    ufc = BASEDF, 
+    mlb = BASEDF, 
+    nhl = BASEDF, 
+    nba = BASEDF
+)
 
 options = Options()
 options.headless = True
@@ -125,8 +124,8 @@ driver.get('https://www.google.com/') #basically initializes the window with thi
 
 #opening and loading all urls
 for casino in CASINO_TAG:
-    print('Opening ' + casino)
     for sport in usersports:
+        print('Opening ' + casino + ' ' + sport)
         driver.switch_to.new_window(casino + sport)
         driver.get(ALL_HTML_DATA[casino + sport][0])
         window_handles[casino + sport] = driver.current_window_handle
@@ -135,10 +134,10 @@ time.sleep(25)
 
 #get the data from the urls
 for casino in CASINO_TAG:
-    print('Reading in ' + casino + ' data')
     for sport in usersports:
-        print(driver.current_window_handle)
-        print(window_handles[casino + sport])
+        print('Reading in ' + casino + ' ' + sport + ' data')
+        print(driver.current_window_handle) #debug
+        print(window_handles[casino + sport]) #debug
         driver.switch_to.window(window_handles[casino + sport])
         html_bets[casino + sport + 'bets'] = driver.find_elements_by_class_name(ALL_HTML_DATA[casino + sport][2])
         html_names[casino + sport + 'names'] = driver.find_elements_by_class_name(ALL_HTML_DATA[casino + sport][1])
@@ -146,10 +145,9 @@ driver.quit()
 
 #sort the data for each casino and sport and create the dataframes for each sport
 for casino in CASINO_TAG:
-    print('Sorting ' + casino + ' data')
     for sport in usersports:
-        print(sport)
-        print(html_bets[casino + sport + 'bets'])
+        print('Sorting ' + casino + ' ' + sport + ' data')
+        # print(html_bets[casino + sport + 'bets']) #debug
         #need to add another elif statement for each new sport
         if sport == 'ufc':
             names1, names2, bets1, bets2 = CASINO_TAG[casino].ufc_data(html_names[casino + sport + 'names'], html_bets[casino + sport + 'bets'])
@@ -163,28 +161,29 @@ for casino in CASINO_TAG:
         elif sport == 'nhl':
             names1, names2, bets1, bets2 = CASINO_TAG[casino].nhl_data(html_names[casino + sport + 'names'], html_bets[casino + sport + 'bets'])
             SPORTS[sport] = makedf_all(SPORTS[sport], names1, names2, bets1, bets2, casino)
+        # elif sport == 'soccer':
+        #     names1, names2, bets1, bets2, bets3 = CASINO_TAG[casino].soccer_data(html_names[casino + sport + 'names'], html_bets[casino + sport + 'bets'])
+        #     SPORTS[sport] = makedf_all3outcome(SPORTS[sport], names1, names2, bets1, bets2, bets3, casino)
         else:
             print('Unimplemented Sport')
 
 #calculate the arbs for each sport and generate the spreadsheets
 for casino in CASINO_TAG:
-    print('Calculating ' + casino + ' arbs')
     for sport in usersports:
-        #need to add another elif statement for each new sport
-        if sport == 'ufc':
+        print('Calculating ' + casino + ' ' + sport + ' arbs')
+        #need to add each additional sport to the relevent if statement
+        if sport == 'ufc' or sport == 'mlb' or sport == 'nba' or sport == 'nhl': #for any sport with only Win/Loss
             SPORTS[sport] = arbs(SPORTS[sport],CASINO_TAG)
             opss(SPORTS[sport])
-        elif sport == 'mlb':
-            SPORTS[sport] = arbs(SPORTS[sport],CASINO_TAG)
-            opss(SPORTS[sport])
-        elif sport == 'nba':
-            SPORTS[sport] = arbs(SPORTS[sport],CASINO_TAG)
-            opss(SPORTS[sport])
-        elif sport == 'nhl':
-            SPORTS[sport] = arbs(SPORTS[sport],CASINO_TAG)
-            opss(SPORTS[sport])
+        # elif sport == 'soccer': #for any sport with Win/Loss/Draw
+        #     SPORTS[sport] = arbs3outcome(SPORTS[sport],CASINO_TAG)
+        #     opss3outcome(SPORTS[sport])
         else:
             print('Unimplemented Sport')
 
+#print all sport data
 for sport in usersports:
     print(SPORTS[sport])
+    # print(SPORTS[sport].loc['Arb'==True]) #only prints the games that have profitable arbs
+    # print(SPORTS[sport][['Team1' 'Max Bet1', 'Max Bet1 Casino', 'Team2', 'Max Bet2', 'Arb value']].loc['Arb'==True]) #only print relevant columns with profitable arbs
+    # print(SPORTS[sport][['Team1' 'Max Bet1', 'Max Bet1 Casino', 'Team2', 'Max Bet2', 'Max Bet Draw', 'Max Bet Draw Casino', 'Arb value']].loc['Arb'==True]) #only print relevant columns with profitable arbs for 3 outcome sports

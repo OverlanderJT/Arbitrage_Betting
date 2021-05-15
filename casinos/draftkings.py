@@ -1,4 +1,4 @@
-from functions import *
+from functions import alphabetize, singleconvert
 
 
 def ufc_data(html_names, html_bets):
