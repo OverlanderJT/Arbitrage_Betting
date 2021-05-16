@@ -1,7 +1,7 @@
 from functions import alphabetize, singleconvert
 
 
-def ufc_data(html_names, html_bets):
+def ufc_data(html_names:list, html_bets:list) -> list:
     bets1 = []
     bets2 = []
     names1 = []
@@ -19,7 +19,7 @@ def ufc_data(html_names, html_bets):
     return alphabetize(names1, names2, bets1, bets2)
 
 
-def nhl_data(html_names, html_bets):
+def nhl_data(html_names:list, html_bets:list) -> list:
     bets1 = []
     bets2 = []
     names1 = []
@@ -58,7 +58,7 @@ def nhl_data(html_names, html_bets):
     return alphabetize(names1, names2, bets1, bets2)
 
 
-def nba_data(html_names, html_bets):
+def nba_data(html_names:list, html_bets:list) -> list:
     bets1 = []
     bets2 = []
     names1 = []
@@ -91,7 +91,7 @@ def nba_data(html_names, html_bets):
 
 #This function might only work in the case of the games happening the same day
 #I'm not entirely sure why this one works the way it does, but I'll touch it later
-def mlb_data(html_names, html_bets):
+def mlb_data(html_names:list, html_bets:list) -> list:
     bets1 = []
     bets2 = []
     names1 = []

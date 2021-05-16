@@ -3,7 +3,7 @@ import xlsxwriter as xl
 import pandas as pd
 
 
-def alphabetize(names1, names2, bets1, bets2):
+def alphabetize(names1:list, names2:list, bets1:list, bets2:list) -> list:
     #rearranges the fighters so that the first and second names are in alphabetical order
     for i in range(len(names1)):
         if names1[i] > names2[i]:
@@ -11,16 +11,16 @@ def alphabetize(names1, names2, bets1, bets2):
             bets1[i], bets2[i] = bets2[i], bets1[i] #swaps the bets
     return names1, names2, bets1, bets2
 
-def singleconvert(odd):
-    #converts the data from string to the converted odds for future calcs
+def singleconvert(odd:str) -> int:
+    #converts the data from string to the int odds for future calcs
     #If the odd cannot convert the input into a number, it makes the odd -9999
     try:
-        conv = int(odd.replace("+", ""))
+        convint = int(odd.replace("+", ""))
     except:
-        conv = -9999
-    return conv
+        convint = -9999
+    return convint
 
-def makedf_all(df, names1, names2, bets1, bets2, casino):
+def makedf_all(df:pd.DataFrame, names1:list, names2:list, bets1:list, bets2:list, casino:str) -> pd.DataFrame:
     #adds all of the fights to the final df, combining when it can
 
     bet1 = 'Bet1 {}'.format(casino)
@@ -38,7 +38,7 @@ def makedf_all(df, names1, names2, bets1, bets2, casino):
                 df = df.append({'Team 1': names1[i], bet1: bets1[i], 'Team 2': names2[i], bet2: bets2[i]},ignore_index=True)
     return df
 
-def arbs(df, casinolist):
+def arbs(df:pd.DataFrame, casinolist:list) -> pd.DataFrame:
     #finds the max bets
     df['Max Bet1'] = df.iloc[:,1:len(casinolist)+1].max(axis=1)
     df['Max Bet1 Casino'] = df.iloc[:,1:len(casinolist)+1].idxmax(axis='columns').str[-2:] #if there is an error here, remove '.str[-2:]' and uncomment the line below
@@ -62,7 +62,7 @@ def arbs(df, casinolist):
 
     return df
 
-def opss(df):
+def opss(df:pd.DataFrame):
     #output spreadsheet for all viable arbs
     tempdf = pd.DataFrame()
     tempdf = tempdf.append(df.loc[df['Arb'] is True], ignore_index=True)
@@ -115,7 +115,7 @@ def opss(df):
         sheet1.set_column('D:D', 19)
         wb.close()
 
-def makedf_all3outcome(df, names1, names2, bets1, bets2, bets3, casino):
+def makedf_all3outcome(df:pd.DataFrame, names1:list, names2:list, bets1:list, bets2:list, bets3:list, casino:str) -> pd.DataFrame:
     #adds all of the fights to the final df, combining when it can
 
     bet1 = 'Bet1 {}'.format(casino)
@@ -135,7 +135,7 @@ def makedf_all3outcome(df, names1, names2, bets1, bets2, bets3, casino):
                 df = df.append({'Team 1': names1[i], bet1: bets1[i], 'Team 2': names2[i], bet2: bets2[i], bet3: bets3[i]},ignore_index=True)
     return df
 
-def arbs3outcome(df,casinolist):
+def arbs3outcome(df:pd.DataFrame,casinolist:list) -> pd.DataFrame:
     #finds the max bets
     df['Max Bet1'] = df.iloc[:, 1:len(casinolist) + 1].max(axis=1)
     df['Max Bet1 Casino'] = df.iloc[:, 1:len(casinolist) + 1].idxmax(axis='columns').str[-2:] #if there is an error here, remove '.str[-2:]' and uncomment the line below
@@ -165,7 +165,7 @@ def arbs3outcome(df,casinolist):
 
     return df
 
-def opss3outcome(df):
+def opss3outcome(df:pd.DataFrame):
     tempdf = pd.DataFrame()
     tempdf = tempdf.append(df.loc[df['Arb'] is True], ignore_index=True)
 
