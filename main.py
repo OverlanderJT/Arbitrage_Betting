@@ -4,6 +4,7 @@ from functions import makedf_all, makedf_all3outcome, arbs, arbs3outcome, opss, 
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 import time
+from copy import deepcopy
 import casinos.fanduel as fd #need to add another import per casino
 import casinos.draftkings as dk
 import casinos.betmgm as bm
@@ -109,13 +110,13 @@ for casinoindex in range(len(CASINO_TAG)):
     BASEDFDRAW.insert(casinoindex+6,'Bet2 {}'.format(list(CASINO_TAG.keys())[casinoindex]),nan)
     # BASEDFDRAW.insert(casinoindex+?,'Bet3 {}'.format(list(CASINO_TAG.keys())[casinoindex]),nan) #don't know what the ? needs to be
 
-#need to add the sport to the dict below with its base dataframe
-SPORTS = dict(
-    ufc = BASEDF, 
-    mlb = BASEDF, 
-    nhl = BASEDF, 
-    nba = BASEDF
-)
+#need to add the sport to the dict below with a copy of its base dataframe "'sport':deepcopy(BASEDF)" or "'sport' = deepcopy(BASEDFDRAW)"
+SPORTS = {
+    'ufc':deepcopy(BASEDF),
+    'mlb':deepcopy(BASEDF),
+    'nhl':deepcopy(BASEDF),
+    'nba':deepcopy(BASEDF)
+}
 
 options = Options()
 options.headless = True
@@ -130,7 +131,7 @@ for casino in CASINO_TAG:
         driver.get(ALL_HTML_DATA[casino + sport][0])
         window_handles[casino + sport] = driver.current_window_handle
 print('Loading in Web Pages')
-time.sleep(25)
+time.sleep(25) #wait time to make sure that all pages are loaded in
 
 #get the data from the urls
 for casino in CASINO_TAG:
@@ -165,7 +166,7 @@ for casino in CASINO_TAG:
         #     names1, names2, bets1, bets2, bets3 = CASINO_TAG[casino].soccer_data(html_names[casino + sport + 'names'], html_bets[casino + sport + 'bets'])
         #     SPORTS[sport] = makedf_all3outcome(SPORTS[sport], names1, names2, bets1, bets2, bets3, casino)
         else:
-            print('Unimplemented Sport')
+            print('Unimplemented Sport') #this should never happen
 
 #calculate the arbs for each sport and generate the spreadsheets
 for casino in CASINO_TAG:
@@ -179,7 +180,7 @@ for casino in CASINO_TAG:
         #     SPORTS[sport] = arbs3outcome(SPORTS[sport],CASINO_TAG)
         #     opss3outcome(SPORTS[sport])
         else:
-            print('Unimplemented Sport')
+            print('Unimplemented Sport') #this should never happen
 
 #print all sport data
 for sport in usersports:
