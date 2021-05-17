@@ -3,6 +3,21 @@ import xlsxwriter as xl
 import pandas as pd
 
 
+class Casino:
+
+    def __init__(self, sportlist:list, tag:tuple, html_data:dict):
+        self.tag = tag
+        self.html_data = html_data
+        self.html_bets = {}
+        self.html_names = {}
+        self.window_handles = {}
+        self.num_of_sports = len(self.html_data)
+
+        for sport in sportlist:
+            self.html_bets[sport] = None
+            self.html_names[sport] = None
+            self.window_handles[sport] = None
+
 def alphabetize(names1:list, names2:list, bets1:list, bets2:list) -> list:
     #rearranges the fighters so that the first and second names are in alphabetical order
     for i in range(len(names1)):
