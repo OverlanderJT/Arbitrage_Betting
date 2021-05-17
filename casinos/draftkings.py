@@ -1,4 +1,8 @@
 from functions import alphabetize, singleconvert
+#from selenium import webdriver
+#from selenium.webdriver.firefox.options import Options
+#from selenium.webdriver.common.by import By
+#import time
 
 
 def ufc_data(html_names:list, html_bets:list) -> list:
@@ -9,13 +13,13 @@ def ufc_data(html_names:list, html_bets:list) -> list:
 
     for i in range(len(html_bets)):
         if i % 2 == 0:
-            bets1.append(singleconvert(html_bets[i].getText().replace("\n", "").replace("\t", "")))
+            bets1.append(singleconvert(html_bets[i].replace("\n", "").replace("\t", "")))
             names1.append(
-                html_names[i].getText().replace("\n", "").replace("\t", "").replace(".", "").replace(" ", ""))
+                html_names[i].replace("\n", "").replace("\t", "").replace(".", "").replace(" ", ""))
         elif i % 2 == 1:
-            bets2.append(singleconvert(html_bets[i].getText().replace("\n", "").replace("\t", "")))
+            bets2.append(singleconvert(html_bets[i].replace("\n", "").replace("\t", "")))
             names2.append(
-                html_names[i].getText().replace("\n", "").replace("\t", "").replace(".", "").replace(" ", ""))
+                html_names[i].replace("\n", "").replace("\t", "").replace(".", "").replace(" ", ""))
     return alphabetize(names1, names2, bets1, bets2)
 
 
@@ -30,9 +34,9 @@ def nhl_data(html_names:list, html_bets:list) -> list:
 
     for i in range(len(html_bets)):
         if (i % 3 == 2):
-            temp_bets.append(html_bets[i].getText().replace("\n", "").replace("\t", ""))
+            temp_bets.append(html_bets[i].replace("\n", "").replace("\t", ""))
     for i in range(len(html_names)):
-        temp1 = html_names[i].getText().replace("\n", "").replace("\t", "")
+        temp1 = html_names[i].replace("\n", "").replace("\t", "")
         temp2 = ''
         for j in range(len(temp1)):
             if (temp1[-1 * (j + 1)] == " "):
@@ -68,9 +72,9 @@ def nba_data(html_names:list, html_bets:list) -> list:
 
     for i in range(len(html_bets)): #for some reason names1 and names2 are different lengths
         if (i % 3 == 2):
-            temp_bets.append(html_bets[i].getText().replace("\n", "").replace("\t", ""))
+            temp_bets.append(html_bets[i].replace("\n", "").replace("\t", ""))
     for i in range(len(html_names)):
-        temp1 = html_names[i].getText().replace("\n", "").replace("\t", "")
+        temp1 = html_names[i].replace("\n", "").replace("\t", "")
         temp2 = ''
         for j in range(len(temp1)):
             if (temp1[-1 * (j + 1)] == " "):
@@ -102,9 +106,9 @@ def mlb_data(html_names:list, html_bets:list) -> list:
 
     for i in range(len(html_bets)):
         if (i % 3 == 2):
-            temp_bets.append(html_bets[i].getText().replace("\n", "").replace("\t", ""))
+            temp_bets.append(html_bets[i].replace("\n", "").replace("\t", ""))
     for i in range(len(html_names)):
-        temp1 = html_names[i].getText().replace("\n", "").replace("\t", "")
+        temp1 = html_names[i].replace("\n", "").replace("\t", "")
         temp2 = ''
         for j in range(len(temp1)):
             if (temp1[-1 * (j + 1)] == " "):
@@ -131,3 +135,21 @@ def mlb_data(html_names:list, html_bets:list) -> list:
 
 ####################################################################
 
+'''
+CLASS_NAME = 'class name'
+temp1, temp2 = [], []
+options = Options()
+options.headless = True
+driver = webdriver.Firefox(options=options)
+driver.get('https://sportsbook.draftkings.com/leagues/basketball/103?category=game-lines&subcategory=game')
+driver_bets = driver.find_elements(By.CLASS_NAME, 'sportsbook-outcome-cell__element')
+driver_names = driver.find_elements(By.CLASS_NAME, 'event-cell__name')
+print(driver_bets)
+for bet in driver_bets:
+    temp1.append(bet.text)
+for name in driver_names:
+    temp2.append(name.text)
+print(temp1)
+print(temp2)
+driver.quit()
+'''

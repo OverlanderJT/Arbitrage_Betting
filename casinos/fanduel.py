@@ -1,4 +1,7 @@
 from functions import alphabetize, singleconvert
+#from selenium import webdriver
+#from selenium.webdriver.firefox.options import Options
+#import time
 
 
 def ufc_data(html_names:list, html_bets:list) -> list:
@@ -8,8 +11,8 @@ def ufc_data(html_names:list, html_bets:list) -> list:
     names2 = []
     
     for i in range(len(html_bets)):
-        odd = singleconvert(html_bets[i].text)
-        name = html_names[i].text.replace(".","").replace(" ","")
+        odd = singleconvert(html_bets[i])
+        name = html_names[i].replace(".","").replace(" ","")
         if i%2 == 0:
             bets1.append(odd)
             names1.append(name)
@@ -26,7 +29,7 @@ def nhl_data(html_names:list, html_bets:list) -> list:
     names2 = []
 
     for i in range(len(html_bets)):
-        odd = html_bets[i].text
+        odd = html_bets[i]
         if (i % 6 == 2):
             odd = singleconvert(odd)
             bets1.append(odd)
@@ -35,7 +38,7 @@ def nhl_data(html_names:list, html_bets:list) -> list:
             bets2.append(odd)
 
     for i in range(len(html_names)):
-        temp1 = html_names[i].text
+        temp1 = html_names[i]
         temp2 = ''
         for j in range(len(temp1)):
             if (temp1[-1*(j+1)] == " "):
@@ -56,7 +59,7 @@ def nba_data(html_names:list, html_bets:list) -> list:
     names2 = []
 
     for i in range(len(html_bets)):
-        odd = html_bets[i].text
+        odd = html_bets[i]
         if (i % 6 == 2):
             odd = singleconvert(odd)
             bets1.append(odd)
@@ -65,7 +68,7 @@ def nba_data(html_names:list, html_bets:list) -> list:
             bets2.append(odd)
 
     for i in range(len(html_names)):
-        temp1 = html_names[i].text
+        temp1 = html_names[i]
         temp2 = ''
         for j in range(len(temp1)):
             if (temp1[-1 * (j + 1)] == " "):
@@ -85,7 +88,7 @@ def mlb_data(html_names:list, html_bets:list) -> list:
     names2 = []
 
     for i in range(len(html_bets)):
-        odd = html_bets[i].text
+        odd = html_bets[i]
         if (i % 6 == 2):
             odd = singleconvert(odd)
             bets1.append(odd)
@@ -94,7 +97,7 @@ def mlb_data(html_names:list, html_bets:list) -> list:
             bets2.append(odd)
 
     for i in range(len(html_names)):
-        temp1 = html_names[i].text
+        temp1 = html_names[i]
         temp2 = ''
         for j in range(len(temp1)):
             if (temp1[-1 * (j + 1)] == " "):
@@ -108,5 +111,4 @@ def mlb_data(html_names:list, html_bets:list) -> list:
     return alphabetize(names1, names2, bets1, bets2)
     
 ##############################################
-
 

@@ -3,6 +3,7 @@ from numpy import nan
 from functions import makedf_all, makedf_all3outcome, arbs, arbs3outcome, opss, opss3outcome
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.common.by import By
 import time
 from copy import deepcopy
 import casinos.fanduel as fd #need to add another import per casino
@@ -51,7 +52,7 @@ html_bets = {
 usersports = [
     'ufc',
     'mlb',
-    # 'nhl',
+    'nhl',
     'nba'
 ]
 
@@ -59,15 +60,15 @@ usersports = [
 CASINO_TAG = {
     'fd':fd, #fanduel
     'bm':bm, #betmbm
-    'dk':dk #draftkings
+    #'dk':dk #draftkings
 }
 
 #need to add more lines for each new casino and sport which is 'casinosport':('url','nameclass','betclass'),
 ALL_HTML_DATA = {
-    'dkufc':('https://sportsbook.draftkings.com/leagues/mma/2162?category=fight-lines&subcategory=moneyline','sportsbook-outcome-cell__label','sportsbook-odds american default-color'), 
-    'dkmlb':('https://sportsbook.draftkings.com/leagues/baseball/2003?category=game-lines-&subcategory=game','event-cell__name','sportsbook-table__column-row'), 
-    'dknhl':('https://sportsbook.draftkings.com/leagues/hockey/2022?category=game-lines&subcategory=game','event-cell__name','sportsbook-table__column-row'), 
-    'dknba':('https://sportsbook.draftkings.com/leagues/basketball/103?category=game-lines&subcategory=game','event-cell__name','sportsbook-odds american default-color'),
+    'dkufc':('https://sportsbook.draftkings.com/leagues/mma/2162?category=fight-lines&subcategory=moneyline','sportsbook-outcome-cell__label','sportsbook-outcome-cell__element'), 
+    'dkmlb':('https://sportsbook.draftkings.com/leagues/baseball/2003?category=game-lines-&subcategory=game','event-cell__name','sportsbook-outcome-cell__element'), 
+    'dknhl':('https://sportsbook.draftkings.com/leagues/hockey/2022?category=game-lines&subcategory=game','event-cell__name','sportsbook-outcome-cell__element'), 
+    'dknba':('https://sportsbook.draftkings.com/leagues/basketball/103?category=game-lines&subcategory=game','event-cell__name','sportsbook-outcome-cell__element'),
 
     'fdufc':('https://sportsbook.fanduel.com/sports/navigation/7287.1/9886.3','selection-name','sh'),
     'fdmlb':('https://sportsbook.fanduel.com/sports/navigation/1110.1/7627.1','name','sh'),
@@ -122,6 +123,7 @@ options = Options()
 options.headless = True
 driver = webdriver.Firefox(options=options)
 driver.get('https://www.google.com/') #basically initializes the window with this website. All the tabs are then loaded afterwards for easy navigation based on the names
+CLASS_NAME = 'class name'
 
 #opening and loading all urls
 for casino in CASINO_TAG:
@@ -136,12 +138,19 @@ time.sleep(25) #wait time to make sure that all pages are loaded in
 #get the data from the urls
 for casino in CASINO_TAG:
     for sport in usersports:
+        temp1, temp2 = [], []
         print('Reading in ' + casino + ' ' + sport + ' data')
         print(driver.current_window_handle) #debug
         print(window_handles[casino + sport]) #debug
         driver.switch_to.window(window_handles[casino + sport])
-        html_bets[casino + sport + 'bets'] = driver.find_elements_by_class_name(ALL_HTML_DATA[casino + sport][2])
-        html_names[casino + sport + 'names'] = driver.find_elements_by_class_name(ALL_HTML_DATA[casino + sport][1])
+        driver_bets = driver.find_elements(By.CLASS_NAME, ALL_HTML_DATA[casino + sport][2])
+        driver_names = driver.find_elements(By.CLASS_NAME, ALL_HTML_DATA[casino + sport][1])
+        for bet in driver_bets:
+            temp1.append(bet.text)
+        for name in driver_names:
+            temp2.append(name.text)
+        html_bets[casino + sport + 'bets'] = temp1
+        html_names[casino + sport + 'names'] = temp2
 driver.quit()
 
 #sort the data for each casino and sport and create the dataframes for each sport

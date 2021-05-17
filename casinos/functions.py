@@ -167,7 +167,7 @@ def arbs3outcome(df:pd.DataFrame,casinolist:list) -> pd.DataFrame:
 
 def opss3outcome(df:pd.DataFrame):
     tempdf = pd.DataFrame()
-    tempdf = tempdf.append(df.loc[df['Arb'] is True], ignore_index=True)
+    tempdf = tempdf.append(df.loc[df['Arb'] == True], ignore_index=True)
 
     # for l in range(len(df.loc[df['Arb'] is True].index)):
     for l in range(len(tempdf.index)):

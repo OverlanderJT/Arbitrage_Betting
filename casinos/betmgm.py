@@ -9,7 +9,7 @@ def ufc_data(html_names:list, html_bets:list) -> list:
     temp_bets = []
 
     for i in range(len(html_names)):
-        name = html_names[i].text.replace(".","").replace(" ","")
+        name = html_names[i].replace(".","").replace(" ","")
         temp = ""
         for j in range(len(name)-3):
             temp += name[j]
@@ -19,7 +19,7 @@ def ufc_data(html_names:list, html_bets:list) -> list:
             names2.append(temp)
 
     for line in html_bets:
-        temp_bets.append(line.text)
+        temp_bets.append(line)
     odd1 = "err"
     odd2 = "err"
 
@@ -67,7 +67,7 @@ def nhl_data(html_names:list, html_bets:list) -> list:
     temp_bets = []
 
     for line in html_bets:
-        temp_bets.append(line.text)
+        temp_bets.append(line)
     odd1 = "err"
     odd2 = "err"
 
@@ -106,7 +106,7 @@ def nhl_data(html_names:list, html_bets:list) -> list:
     del bets2[0]
             
     for i in range(2, len(html_names)):
-        temp1 = html_names[i].text
+        temp1 = html_names[i]
         temp2 = ''
         for j in range(len(temp1)):
             if (temp1[-1*(j+1)] == " "):
@@ -128,7 +128,7 @@ def nba_data(html_names:list, html_bets:list) -> list:
     temp_bets = []
 
     for line in html_bets:
-        temp_bets.append(line.text)
+        temp_bets.append(line)
     odd1 = "err"
     odd2 = "err"
 
@@ -167,7 +167,7 @@ def nba_data(html_names:list, html_bets:list) -> list:
     del bets2[0]
 
     for i in range(2, len(html_names)):
-        temp1 = html_names[i].text
+        temp1 = html_names[i]
         temp2 = ''
         for j in range(len(temp1)):
             if (temp1[-1*(j+1)] == " "):
@@ -189,7 +189,7 @@ def mlb_data(html_names:list, html_bets:list) -> list:
     temp_bets = []
 
     for line in html_bets:
-        temp_bets.append(line.text)
+        temp_bets.append(line)
     odd1 = "err"
     odd2 = "err"
 
@@ -232,7 +232,7 @@ def mlb_data(html_names:list, html_bets:list) -> list:
     del bets2[-1]
 
     for i in range(2, len(html_names)):
-        temp1 = html_names[i].text
+        temp1 = html_names[i]
         temp2 = ''
         for j in range(len(temp1)):
             if (temp1[-1*(j+1)] == " "):
