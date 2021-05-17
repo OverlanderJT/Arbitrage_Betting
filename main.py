@@ -98,7 +98,7 @@ time.sleep(20) #wait time to make sure that all pages are loaded in
 for casino in CASINOS:
     for sport in usersports:
         temp1, temp2 = [], []
-        print('Reading in ' + casino + ' ' + sport + ' data')
+        print('Reading in ' + casino.tag[0] + ' ' + sport + ' data')
         #print(driver.current_window_handle) #debug
         #print(casino.window_handles[sport]) #debug
         driver.switch_to.window(casino.window_handles[sport])
@@ -115,7 +115,7 @@ driver.quit()
 #sort the data for each casino and sport and create the dataframes for each sport
 for casino in CASINOS:
     for sport in usersports:
-        print('Sorting ' + casino + ' ' + sport + ' data')
+        print('Sorting ' + casino.tag[0] + ' ' + sport + ' data')
         # print(html_bets[casino + sport + 'bets']) #debug
         #need to add another elif statement for each new sport
         if sport == 'ufc':
