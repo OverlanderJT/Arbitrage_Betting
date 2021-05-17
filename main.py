@@ -60,7 +60,7 @@ usersports = [
 CASINO_TAG = {
     'fd':fd, #fanduel
     'bm':bm, #betmbm
-    #'dk':dk #draftkings
+    'dk':dk #draftkings
 }
 
 #need to add more lines for each new casino and sport which is 'casinosport':('url','nameclass','betclass'),
