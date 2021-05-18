@@ -4,7 +4,7 @@ from functions import Casino, makedf_all, makedf_all3outcome, arbs, arbs3outcome
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.by import By
-import time
+from time import sleep
 from copy import deepcopy
 import casinos.fanduel as fd #need to add another import per casino
 import casinos.draftkings as dk
@@ -54,9 +54,7 @@ draftkings = Casino(
 )
 
 #must add each additional casino to the below tuple
-CASINOS = (fanduel, draftkings, betmgm)
-
-
+CASINOS = (fanduel,  betmgm, draftkings)
 
 COLUMNS = {'Team 1':[nan],'Max Bet1':[nan],'Max Bet1 Casino':[nan],'Max Bet1 Conv':[nan],'Team 2':[nan],'Max Bet2':[nan],'Max Bet2 Casino':[nan],'Max Bet2 Conv':[nan]}
 BASEDF = DataFrame(data=COLUMNS)
@@ -75,7 +73,7 @@ SPORTS = {
     'ufc':deepcopy(BASEDF),
     'mlb':deepcopy(BASEDF),
     'nhl':deepcopy(BASEDF),
-    'nba':deepcopy(BASEDF)
+    'nba':deepcopy(BASEDF),
 }
 
 options = Options()
@@ -92,7 +90,7 @@ for casino in CASINOS:
         driver.get(casino.html_data[sport][0])
         casino.window_handles[sport] = driver.current_window_handle
 print('Loading in Web Pages')
-time.sleep(20) #wait time to make sure that all pages are loaded in
+sleep(20) #wait time to make sure that all pages are loaded in
 
 #get the data from the urls
 for casino in CASINOS:
@@ -152,7 +150,8 @@ for casino in CASINOS:
 
 #print all sport data
 for sport in usersports:
+    SPORTS[sport].drop(0, inplace=True) #removes the first blank row that was used to initialize it
     print(SPORTS[sport])
     # print(SPORTS[sport].loc['Arb'==True]) #only prints the games that have profitable arbs
-    # print(SPORTS[sport][['Team1' 'Max Bet1', 'Max Bet1 Casino', 'Team2', 'Max Bet2', 'Arb value']].loc['Arb'==True]) #only print relevant columns with profitable arbs
-    # print(SPORTS[sport][['Team1' 'Max Bet1', 'Max Bet1 Casino', 'Team2', 'Max Bet2', 'Max Bet Draw', 'Max Bet Draw Casino', 'Arb value']].loc['Arb'==True]) #only print relevant columns with profitable arbs for 3 outcome sports
+    # print(SPORTS[sport][['Team1', 'Max Bet1', 'Max Bet1 Casino', 'Team2', 'Max Bet2', 'Arb value']].loc['Arb'==True]) #only print relevant columns with profitable arbs
+    # print(SPORTS[sport][['Team1', 'Max Bet1', 'Max Bet1 Casino', 'Team2', 'Max Bet2', 'Max Bet Draw', 'Max Bet Draw Casino', 'Arb value']].loc['Arb'==True]) #only print relevant columns with profitable arbs for 3 outcome sports
