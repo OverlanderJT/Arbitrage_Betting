@@ -58,9 +58,9 @@ draftkings = Casino(
     tag=('dk', dk),
     html_data={
         'ufc':('https://sportsbook.draftkings.com/leagues/mma/2162?category=fight-lines&subcategory=moneyline','sportsbook-outcome-cell__label','sportsbook-outcome-cell__element'), 
-        'mlb':('https://sportsbook.draftkings.com/leagues/baseball/2003?category=game-lines-&subcategory=game','event-cell__name','sportsbook-outcome-cell__element'), 
+        'mlb':('https://sportsbook.draftkings.com/leagues/baseball/2003?category=game-lines-&subcategory=game','event-cell__name','sportsbook-table__column-row'), 
         'nhl':('https://sportsbook.draftkings.com/leagues/hockey/2022?category=game-lines&subcategory=game','event-cell__name','sportsbook-table__column-row'), 
-        'nba':('https://sportsbook.draftkings.com/leagues/basketball/103?category=game-lines&subcategory=game','event-cell__name','sportsbook-outcome-cell__element'),
+        'nba':('https://sportsbook.draftkings.com/leagues/basketball/103?category=game-lines&subcategory=game','event-cell__name','sportsbook-table__column-row'),
     }
 )
 
