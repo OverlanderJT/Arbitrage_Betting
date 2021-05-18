@@ -56,12 +56,10 @@ def makedf_all(df:pd.DataFrame, names1:list, names2:list, bets1:list, bets2:list
 def arbs(df:pd.DataFrame, casinolist:list) -> pd.DataFrame:
     #finds the max bets
     df['Max Bet1'] = df.iloc[:,1:len(casinolist)+1].max(axis=1)
-    df['Max Bet1 Casino'] = df.iloc[:,1:len(casinolist)+1].idxmax(axis='columns').str[-2:] #if there is an error here, remove '.str[-2:]' and uncomment the line below
-    # df['Max Bet1 Casino'] = df['Max Bet1 Casino'].str[-2:]
+    df['Max Bet1 Casino'] = df.iloc[:,1:len(casinolist)+1].idxmax(axis=1).str[-2:]
 
     df['Max Bet2'] = df.iloc[:,(5+len(casinolist)):len(casinolist)+(5+len(casinolist))].max(axis=1)
-    df['Max Bet2 Casino'] = df.iloc[:,(5+len(casinolist)):len(casinolist)+(5+len(casinolist))].idxmax(axis='columns').str[-2:] #if there is an error here, remove '.str[-2:]' and uncomment the line below
-    # df['Max Bet2 Casino'] = df['Max Bet2 Casino'][-2:]
+    df['Max Bet2 Casino'] = df.iloc[:,(5+len(casinolist)):len(casinolist)+(5+len(casinolist))].idxmax(axis=1).str[-2:]
 
     #converts max bets to non american odds
     df.loc[df['Max Bet1'] < 0, 'Max Bet1 Conv'] = (-100 / df['Max Bet1']) + 1

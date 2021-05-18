@@ -12,19 +12,22 @@ import casinos.draftkings as dk
 import casinos.betmgm as bm
 
 
+clear = lambda: os.system('cls')
+clear()
 #prompts the user to input what sports they want
 usersports = []
 q = False
-sportstring = 'ufc nba nhl mlb '
+sportoptions = ['ufc', 'nba','nhl','mlb'] #need to add each new sport to this list
 while (q == False):
-    if sportstring == '':
+    if len(sportoptions) == 0:
         break
-    entry = input('What sports would you like to arb?  q to quit\n'+sportstring+'\n')
+    entry = input('What sports would you like to arb?  q to quit\n' + ', '.join(sportoptions) + '\n')
+    clear()
     if entry == 'q':
          break
-    if entry in sportstring:
+    if entry in sportoptions:
         usersports.append(entry)
-        sportstring = sportstring.replace(entry + ' ', '')
+        del sportoptions[sportoptions.index(entry)]
     elif entry in usersports:
         print('Duplicate Entry')
     else:
@@ -131,19 +134,19 @@ for casino in CASINOS:
         #need to add another elif statement for each new sport
         if sport == 'ufc':
             names1, names2, bets1, bets2 = casino.tag[1].ufc_data(casino.html_names[sport], casino.html_bets[sport])
-            SPORTS[sport] = makedf_all(SPORTS[sport], names1, names2, bets1, bets2, casino)
+            SPORTS[sport] = makedf_all(SPORTS[sport], names1, names2, bets1, bets2, casino.tag[0])
         elif sport == 'mlb':
             names1, names2, bets1, bets2 = casino.tag[1].mlb_data(casino.html_names[sport], casino.html_bets[sport])
-            SPORTS[sport] = makedf_all(SPORTS[sport], names1, names2, bets1, bets2, casino)
+            SPORTS[sport] = makedf_all(SPORTS[sport], names1, names2, bets1, bets2, casino.tag[0])
         elif sport == 'nba':
             names1, names2, bets1, bets2 = casino.tag[1].nba_data(casino.html_names[sport], casino.html_bets[sport])
-            SPORTS[sport] = makedf_all(SPORTS[sport], names1, names2, bets1, bets2, casino)
+            SPORTS[sport] = makedf_all(SPORTS[sport], names1, names2, bets1, bets2, casino.tag[0])
         elif sport == 'nhl':
             names1, names2, bets1, bets2 = casino.tag[1].nhl_data(casino.html_names[sport], casino.html_bets[sport])
-            SPORTS[sport] = makedf_all(SPORTS[sport], names1, names2, bets1, bets2, casino)
+            SPORTS[sport] = makedf_all(SPORTS[sport], names1, names2, bets1, bets2, casino.tag[0])
         # elif sport == 'soccer':
         #     names1, names2, bets1, bets2, bets3 = casino.tag[1].soccer_data(casino.html_names[sport], casino.html_bets[sport])
-        #     SPORTS[sport] = makedf_all3outcome(SPORTS[sport], names1, names2, bets1, bets2, bets3, casino)
+        #     SPORTS[sport] = makedf_all3outcome(SPORTS[sport], names1, names2, bets1, bets2, bets3, casino.tag[0])
         else:
             print('Unimplemented Sport') #this should never happen
 
@@ -162,7 +165,6 @@ for casino in CASINOS:
             print('Unimplemented Sport') #this should never happen
 
 #clears the terminal before printing all of the dataframes
-clear = lambda: os.system('cls')
 clear()
 
 #print all sport data
@@ -170,5 +172,5 @@ for sport in usersports:
     SPORTS[sport].drop(0, inplace=True) #removes the first blank row that was used to initialize it
     print(SPORTS[sport])
     # print(SPORTS[sport].loc['Arb'==True]) #only prints the games that have profitable arbs
-    # print(SPORTS[sport][['Team1', 'Max Bet1', 'Max Bet1 Casino', 'Team2', 'Max Bet2', 'Arb value']].loc['Arb'==True]) #only print relevant columns with profitable arbs
-    # print(SPORTS[sport][['Team1', 'Max Bet1', 'Max Bet1 Casino', 'Team2', 'Max Bet2', 'Max Bet Draw', 'Max Bet Draw Casino', 'Arb value']].loc['Arb'==True]) #only print relevant columns with profitable arbs for 3 outcome sports
+    # print(SPORTS[sport][['Team 1', 'Max Bet1', 'Max Bet1 Casino', 'Team 2', 'Max Bet2', 'Max Bet2 Casino', 'Arb value']]) #only print relevant columns with profitable arbs
+    # print(SPORTS[sport][['Team 1', 'Max Bet1', 'Max Bet1 Casino', 'Team 2', 'Max Bet2', 'Max Bet2 Casino','Max Bet Draw', 'Max Bet Draw Casino', 'Arb value']].loc['Arb'==True]) #only print relevant columns with profitable arbs for 3 outcome sports
