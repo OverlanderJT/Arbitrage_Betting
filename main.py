@@ -6,19 +6,30 @@ from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.by import By
 from time import sleep
 from copy import deepcopy
+import os
 import casinos.fanduel as fd #need to add another import per casino
 import casinos.draftkings as dk
 import casinos.betmgm as bm
 
 
-#this can change depending on what sport(s) the user wants.
-#i.e. this user only wants ufc, mlb, and nba
-usersports = [
-    'ufc',
-    'mlb',
-    'nhl',
-    'nba'
-]
+#prompts the user to input what sports they want
+usersports = []
+q = False
+prompt = 'What sports would you like to arb?  q to quit\nufc nba nhl mlb \n'
+while (q == False):
+    entry = input(prompt)
+    if entry == 'q':
+         break
+    if entry in prompt:
+        usersports.append(entry)
+        prompt = prompt.replace(entry + ' ', '')
+    elif entry in usersports:
+        print('Duplicate Entry')
+    else:
+        print('Invalid entry')
+        
+print('Selected Sports')
+print(usersports)
 
 fanduel = Casino(
     usersports, 
@@ -147,6 +158,10 @@ for casino in CASINOS:
         #     opss3outcome(SPORTS[sport])
         else:
             print('Unimplemented Sport') #this should never happen
+
+#clears the terminal before printing all of the dataframes
+clear = lambda: os.system('cls')
+clear()
 
 #print all sport data
 for sport in usersports:
