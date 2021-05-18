@@ -246,5 +246,84 @@ def mlb_data(html_names:list, html_bets:list) -> list:
 
     return alphabetize(names1, names2, bets1, bets2)
 
+def mls_data(html_names:list, html_bets:list) -> list:
+    bets1 = []
+    bets2 = []
+    bets3 = []
+    names1 = []
+    names2 = []
+    temp_bets = []
+
+    for line in html_bets:
+        temp_bets.append(line)
+    odd = ["err", "err", "err"]
+
+    for item in temp_bets:
+        try:
+            a = int(item[-1])
+            a = -1
+        except:
+            a = 1
+            odd = [-9999, -9999, -9999]
+        if (a < 0):
+            temp = ''
+            b = -1
+            for i in range(len(item)):
+                if ((item[i] == "+") or (item[i] == "-")):
+                    if (b > -1):
+                        odd[b] = singleconvert(temp)
+                        temp = ''
+                    b += 1
+                    temp = temp + item[i]
+                elif (item[i] == "\n"):
+                    if (b == 2):
+                        odd[b] = singleconvert(temp)
+                        break
+                    continue
+                else:
+                    temp = temp + item[i]
+        
+        bets1.append(odd[0])
+        bets2.append(odd[2])
+        bets3.append(odd[1])
+
+    del bets1[0]
+    del bets2[0]
+    del bets3[0]
+
+    for i in range(len(html_names)):
+        if (i % 2 == 0):
+            names1.append(html_names[i])
+        elif (i % 2 == 1):
+            names2.append(html_names[i])
+
+    return alphabetize(names1, names2, bets1, bets2, bets3)
+    #return (names1, names2, bets1, bets2, bets3)
+
 ##########################################################
 
+if __name__ == '__main__':
+    from selenium import webdriver
+    from selenium.webdriver.firefox.options import Options
+    from selenium.webdriver.common.by import By
+    import time
+    
+    CLASS_NAME = 'class name'
+    temp1, temp2 = [], []
+    options = Options()
+    options.headless = True
+    driver = webdriver.Firefox(options=options)
+    driver.get('https://sports.mi.betmgm.com/en/sports/football-4/betting/north-america-9/mls-33155')
+    time.sleep(5)
+    driver_bets = driver.find_elements(By.CLASS_NAME, 'grid-group-container')
+    driver_names = driver.find_elements(By.CLASS_NAME, 'participant')
+    for bet in driver_bets:
+        temp1.append(bet.text)
+    for name in driver_names:
+        temp2.append(name.text)
+    print(temp1)
+    print()
+    print(temp2)
+    print()
+    driver.quit()
+    print(mls_data(temp2, temp1))

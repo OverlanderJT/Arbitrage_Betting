@@ -18,13 +18,16 @@ class Casino:
             self.html_names[sport] = None
             self.window_handles[sport] = None
 
-def alphabetize(names1:list, names2:list, bets1:list, bets2:list) -> list:
+def alphabetize(names1:list, names2:list, bets1:list, bets2:list, bets3:list = []) -> list:
     #rearranges the fighters so that the first and second names are in alphabetical order
     for i in range(len(names1)):
         if names1[i] > names2[i]:
             names1[i], names2[i] = names2[i], names1[i] #swaps the names
             bets1[i], bets2[i] = bets2[i], bets1[i] #swaps the bets
-    return names1, names2, bets1, bets2
+    if (bets3 != []): #In case there is a 3rd option, gives this as output
+        return names1, names2, bets1, bets2, bets3
+    else: #In the case there are only 2 options, gives this as output
+        return names1, names2, bets1, bets2
 
 def singleconvert(odd:str) -> int:
     #converts the data from string to the int odds for future calcs
@@ -180,7 +183,7 @@ def arbs3outcome(df:pd.DataFrame,casinolist:list) -> pd.DataFrame:
 
 def opss3outcome(df:pd.DataFrame):
     tempdf = pd.DataFrame()
-    tempdf = tempdf.append(df.loc[df['Arb'] is True], ignore_index=True)
+    tempdf = tempdf.append(df.loc[df['Arb'] == True], ignore_index=True)
 
     # for l in range(len(df.loc[df['Arb'] is True].index)):
     for l in range(len(tempdf.index)):

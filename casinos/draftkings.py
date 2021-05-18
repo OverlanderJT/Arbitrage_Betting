@@ -166,24 +166,75 @@ def mlb_data(html_names:list, html_bets:list) -> list:
             
     return alphabetize(names1, names2, bets1, bets2)
 
+def mls_data(html_names:list, html_bets:list) -> list:
+    bets1 = []
+    bets2 = []
+    bets3 = []
+    names1 = []
+    names2 = []
+    temp_bets = []
+    temp_names = []
+    a = -1
+
+    for name in html_names:
+        temp_names.append(name.split(" - "))
+
+    for item in html_bets:
+        temp = ""
+        for i in range(len(item)):
+            if ((item[-1 * (i + 1)] == "+") or (item[-1 * (i + 1)] == "-")):
+                temp = item[-1 * (i + 1)] + temp
+                break
+            else:
+                try:
+                    a = int(item[-1 * (i + 1)])
+                    temp = item[-1 * (i + 1)] + temp
+                except:
+                    temp = -9999
+                    break
+        temp_bets.append(temp)
+
+    for names in temp_names:
+        names1.append(names[0])
+        names2.append(names[1])
+        
+    for i in range(len(temp_bets)):
+        odd = singleconvert(temp_bets[i])
+        if (i % 3 == 0):
+            bets1.append(odd)
+        elif (i % 3 == 2):
+            bets2.append(odd)
+        elif (i % 3 == 1):
+            bets3.append(odd)
+            
+    return alphabetize(names1, names2, bets1, bets2, bets3)
+
 ####################################################################
-'''
-CLASS_NAME = 'class name'
-temp1, temp2 = [], []
-options = Options()
-options.headless = True
-driver = webdriver.Firefox(options=options)
-driver.get('https://sportsbook.draftkings.com/leagues/baseball/2003?category=game-lines-&subcategory=game')
-driver_bets = driver.find_elements(By.CLASS_NAME, 'sportsbook-table__column-row')
-driver_names = driver.find_elements(By.CLASS_NAME, 'event-cell__name')
-for bet in driver_bets:
-    temp1.append(bet.text)
-for name in driver_names:
-    temp2.append(name.text)
-print(temp1)
-print()
-print(temp2)
-print()
-driver.quit()
-print(mlb_data(temp2, temp1))
-'''
+if __name__ == '__main__':
+    from selenium import webdriver
+    from selenium.webdriver.firefox.options import Options
+    from selenium.webdriver.common.by import By
+    import time
+        
+    CLASS_NAME = 'class name'
+    temp1, temp2, temp3 = [], [], []
+    options = Options()
+    options.headless = True
+    driver = webdriver.Firefox(options=options)
+    driver.get('https://sportsbook.draftkings.com/leagues/soccer/101?category=game-lines&subcategory=money-line-(regular-time)')
+    driver_bets = driver.find_elements(By.CLASS_NAME, 'sportsbook-outcome-cell')
+    driver_names = driver.find_elements(By.CLASS_NAME, 'sportsbook-event-accordion__title')
+    for bet in driver_bets:
+        temp1.append(bet.text)
+    for name in driver_names:
+        temp2.append(name.text)
+    print(temp1)
+    print()
+    print(temp2)
+    print()
+    #for name in temp2:
+    #    temp3.append(name.split(" - "))
+    #print()
+    #print(temp3)
+    driver.quit()
+    print(mls_data(temp2, temp1))

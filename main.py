@@ -17,7 +17,7 @@ clear()
 #prompts the user to input what sports they want
 usersports = []
 q = False
-sportoptions = ['ufc', 'nba','nhl','mlb'] #need to add each new sport to this list
+sportoptions = ['ufc', 'nba','nhl','mlb', 'mls'] #need to add each new sport to this list
 while (q == False):
     if len(sportoptions) == 0:
         break
@@ -44,6 +44,7 @@ fanduel = Casino(
         'mlb':('https://sportsbook.fanduel.com/sports/navigation/1110.1/7627.1', 'name', 'sh'),
         'nhl':('https://sportsbook.fanduel.com/sports/navigation/1550.1/10329.3', 'name', 'sh'),
         'nba':('https://sportsbook.fanduel.com/sports/navigation/830.1/10107.3', 'name', 'sh'),
+        'mls':('https://sportsbook.fanduel.com/sports/navigation/730.1/9507.1', 'name', 'sh'),
     }
 )
 
@@ -55,6 +56,7 @@ betmgm = Casino(
         'mlb':('https://sports.mi.betmgm.com/en/sports/baseball-23/betting/north-america-9/mlb-75', 'participant', 'grid-group-container'),
         'nhl':('https://sports.mi.betmgm.com/en/sports/ice-hockey-12/betting/north-america-9/nhl-34', 'participant', 'grid-group-container'),
         'nba':('https://sports.mi.betmgm.com/en/sports/basketball-7/betting/north-america-9/nba-6004', 'participant', 'grid-group-container'),
+        'mls':('https://sports.mi.betmgm.com/en/sports/football-4/betting/north-america-9/mls-33155', 'participant', 'grid-group-container'),
     }
 )
 
@@ -66,6 +68,7 @@ draftkings = Casino(
         'mlb':('https://sportsbook.draftkings.com/leagues/baseball/2003?category=game-lines-&subcategory=game','event-cell__name','sportsbook-table__column-row'), 
         'nhl':('https://sportsbook.draftkings.com/leagues/hockey/2022?category=game-lines&subcategory=game','event-cell__name','sportsbook-table__column-row'), 
         'nba':('https://sportsbook.draftkings.com/leagues/basketball/103?category=game-lines&subcategory=game','event-cell__name','sportsbook-table__column-row'),
+        'mls':('https://sportsbook.draftkings.com/leagues/soccer/101?category=game-lines&subcategory=money-line-(regular-time)', 'sportsbook-event-accordion__title', 'sportsbook-outcome-cell'),
     }
 )
 
@@ -82,7 +85,7 @@ for casinoindex in range(len(CASINOS)):
     BASEDF.insert(casinoindex+6,'Bet2 {}'.format(CASINOS[casinoindex].tag[0]),nan)
     BASEDFDRAW.insert(1,'Bet1 {}'.format(CASINOS[casinoindex].tag[0]),nan)
     BASEDFDRAW.insert(casinoindex+6,'Bet2 {}'.format(CASINOS[casinoindex].tag[0]),nan)
-    # BASEDFDRAW.insert(casinoindex+?,'Bet3 {}'.format(CASINOS[casinoindex].tag[0]),nan) #don't know what the ? needs to be
+    BASEDFDRAW.insert(casinoindex+11,'Bet3 {}'.format(CASINOS[casinoindex].tag[0]),nan) #don't know what the ? needs to be
 
 #need to add the sport to the dict below with a copy of its base dataframe "'sport':deepcopy(BASEDF)" or "'sport' = deepcopy(BASEDFDRAW)"
 SPORTS = {
@@ -90,6 +93,7 @@ SPORTS = {
     'mlb':deepcopy(BASEDF),
     'nhl':deepcopy(BASEDF),
     'nba':deepcopy(BASEDF),
+    'mls':deepcopy(BASEDFDRAW),
 }
 
 options = Options()
@@ -144,9 +148,9 @@ for casino in CASINOS:
         elif sport == 'nhl':
             names1, names2, bets1, bets2 = casino.tag[1].nhl_data(casino.html_names[sport], casino.html_bets[sport])
             SPORTS[sport] = makedf_all(SPORTS[sport], names1, names2, bets1, bets2, casino.tag[0])
-        # elif sport == 'soccer':
-        #     names1, names2, bets1, bets2, bets3 = casino.tag[1].soccer_data(casino.html_names[sport], casino.html_bets[sport])
-        #     SPORTS[sport] = makedf_all3outcome(SPORTS[sport], names1, names2, bets1, bets2, bets3, casino.tag[0])
+        elif sport == 'mls':
+             names1, names2, bets1, bets2, bets3 = casino.tag[1].mls_data(casino.html_names[sport], casino.html_bets[sport])
+             SPORTS[sport] = makedf_all3outcome(SPORTS[sport], names1, names2, bets1, bets2, bets3, casino.tag[0])
         else:
             print('Unimplemented Sport') #this should never happen
 
@@ -158,9 +162,9 @@ for casino in CASINOS:
         if sport == 'ufc' or sport == 'mlb' or sport == 'nba' or sport == 'nhl': #for any sport with only Win/Loss
             SPORTS[sport] = arbs(SPORTS[sport],CASINOS)
             opss(SPORTS[sport])
-        # elif sport == 'soccer': #for any sport with Win/Loss/Draw
-        #     SPORTS[sport] = arbs3outcome(SPORTS[sport],CASINOS)
-        #     opss3outcome(SPORTS[sport])
+        elif sport == 'mls': #for any sport with Win/Loss/Draw
+             SPORTS[sport] = arbs3outcome(SPORTS[sport],CASINOS)
+             opss3outcome(SPORTS[sport])
         else:
             print('Unimplemented Sport') #this should never happen
 
