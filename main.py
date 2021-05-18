@@ -15,19 +15,21 @@ import casinos.betmgm as bm
 #prompts the user to input what sports they want
 usersports = []
 q = False
-prompt = 'What sports would you like to arb?  q to quit\nufc nba nhl mlb \n'
+sportstring = 'ufc nba nhl mlb '
 while (q == False):
-    entry = input(prompt)
+    if sportstring == '':
+        break
+    entry = input('What sports would you like to arb?  q to quit\n'+sportstring+'\n')
     if entry == 'q':
          break
-    if entry in prompt:
+    if entry in sportstring:
         usersports.append(entry)
-        prompt = prompt.replace(entry + ' ', '')
+        sportstring = sportstring.replace(entry + ' ', '')
     elif entry in usersports:
         print('Duplicate Entry')
     else:
         print('Invalid entry')
-        
+    
 print('Selected Sports')
 print(usersports)
 
