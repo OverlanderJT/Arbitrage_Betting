@@ -12,7 +12,7 @@ import casinos.draftkings as dk
 import casinos.betmgm as bm
 
 
-clear = lambda: os.system('cls')
+clear = lambda: os.system('cls') #creating the function to clear the terminal for user friendliness
 clear()
 #prompts the user to input what sports they want
 usersports = []
@@ -85,7 +85,7 @@ for casinoindex in range(len(CASINOS)):
     BASEDF.insert(casinoindex+6,'Bet2 {}'.format(CASINOS[casinoindex].tag[0]),nan)
     BASEDFDRAW.insert(1,'Bet1 {}'.format(CASINOS[casinoindex].tag[0]),nan)
     BASEDFDRAW.insert(casinoindex+6,'Bet2 {}'.format(CASINOS[casinoindex].tag[0]),nan)
-    BASEDFDRAW.insert(casinoindex+11,'Bet3 {}'.format(CASINOS[casinoindex].tag[0]),nan) #don't know what the ? needs to be
+    BASEDFDRAW.insert((casinoindex*2)+10,'Bet Draw {}'.format(CASINOS[casinoindex].tag[0]),nan)
 
 #need to add the sport to the dict below with a copy of its base dataframe "'sport':deepcopy(BASEDF)" or "'sport' = deepcopy(BASEDFDRAW)"
 SPORTS = {
@@ -168,8 +168,7 @@ for casino in CASINOS:
         else:
             print('Unimplemented Sport') #this should never happen
 
-#clears the terminal before printing all of the dataframes
-clear()
+clear() #clears the terminal before printing all of the dataframes
 
 #print all sport data
 for sport in usersports:
