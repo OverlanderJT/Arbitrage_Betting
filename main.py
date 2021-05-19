@@ -10,6 +10,7 @@ import os
 import casinos.fanduel as fd #need to add another import per casino
 import casinos.draftkings as dk
 import casinos.betmgm as bm
+import casinos.betrivers as br
 
 
 clear = lambda: os.system('cls') #creating the function to clear the terminal for user friendliness
@@ -69,6 +70,15 @@ draftkings = Casino(
         'nhl':('https://sportsbook.draftkings.com/leagues/hockey/2022?category=game-lines&subcategory=game','event-cell__name','sportsbook-table__column-row'), 
         'nba':('https://sportsbook.draftkings.com/leagues/basketball/103?category=game-lines&subcategory=game','event-cell__name','sportsbook-table__column-row'),
         'mls':('https://sportsbook.draftkings.com/leagues/soccer/101?category=game-lines&subcategory=money-line-(regular-time)', 'sportsbook-event-accordion__title', 'sportsbook-outcome-cell'),
+    }
+)
+
+betrivers = Casino(
+    usersports,
+    tag = ('br', br),
+    html_data={
+        'ufc':('https://mi.betrivers.com/?page=sportsbook&group=1000093883&type=prematch#home','participant--name', 'outcome-value'),
+        'nhl':('https://mi.betrivers.com/?page=sportsbook&group=1000093657&type=prematch#home','participant--name', 'outcome-value'),
     }
 )
 
