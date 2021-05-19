@@ -173,7 +173,7 @@ def arbs3outcome(df:pd.DataFrame,casinolist:list) -> pd.DataFrame:
     df['Arb value'] = (1 / df['Max Bet1 Conv']) + (1 / df['Max Bet2 Conv']) + (1 / df['Max Bet Draw Conv'])
     df.loc[df['Arb value'] <= 1, 'Arb'] = True
     df = df.fillna(value={'Arb': False})
-    df = df.fillna(0)
+    # df = df.fillna(0)
 
     return df
 
