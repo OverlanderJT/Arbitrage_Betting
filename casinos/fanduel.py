@@ -128,11 +128,22 @@ def mls_data(html_names:list, html_bets:list) -> list:
             bets3.append(odd)
 
     for i in range(len(html_names)):
-        temp = html_names[i]
+        name = html_names[i].replace("FC", "").replace("SC", "").replace(" ", "").replace("Utd", "United").replace("LA", "LosAngeles").replace("Impact", "").replace("CF", "")
+        if ("Columbus" in name):
+            name += "Crew"
+        if ("NewEngland" in name):
+            name += "Revolution"
+        if ("Philadelphia" in name):
+            name += "Union"
+        if ("Colorado" in name):
+            name += "Rapids"
+        if ("Kansas" in name):
+            name = "Sporting" + name
+            
         if (i % 2 == 0):
-            names1.append(temp)
+            names1.append(name)
         elif (i % 2 == 1):
-            names2.append(temp)
+            names2.append(name)
     return alphabetize(names1, names2, bets1, bets2, bets3)
 
 ##############################################

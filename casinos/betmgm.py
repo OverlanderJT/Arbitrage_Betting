@@ -292,13 +292,14 @@ def mls_data(html_names:list, html_bets:list) -> list:
     del bets3[0]
 
     for i in range(len(html_names)):
+        name = html_names[i].replace("FC", "").replace("SC", "").replace("CF", "").replace(" ", "").replace("LA", "LosAngeles")
+        
         if (i % 2 == 0):
-            names1.append(html_names[i])
+            names1.append(name)
         elif (i % 2 == 1):
-            names2.append(html_names[i])
+            names2.append(name)
 
     return alphabetize(names1, names2, bets1, bets2, bets3)
-    #return (names1, names2, bets1, bets2, bets3)
 
 ##########################################################
 

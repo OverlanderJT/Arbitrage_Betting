@@ -1,9 +1,5 @@
 from functions import alphabetize, singleconvert
-from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.common.by import By
-#import time
-
+from functions import alphabetize, singleconvert
 
 def ufc_data(html_names:list, html_bets:list) -> list:
     bets1 = []
@@ -195,8 +191,11 @@ def mls_data(html_names:list, html_bets:list) -> list:
         temp_bets.append(temp)
 
     for names in temp_names:
-        names1.append(names[0])
-        names2.append(names[1])
+        name1 = names[0].replace("FC", "").replace(".", "").replace("SC", "").replace(" ", "").replace("CF", "")
+        name2 = names[1].replace("FC", "").replace(".", "").replace("SC", "").replace(" ", "").replace("CF", "")
+        
+        names1.append(name1)
+        names2.append(name2)
         
     for i in range(len(temp_bets)):
         odd = singleconvert(temp_bets[i])
@@ -228,13 +227,9 @@ if __name__ == '__main__':
         temp1.append(bet.text)
     for name in driver_names:
         temp2.append(name.text)
-    print(temp1)
-    print()
-    print(temp2)
-    print()
-    #for name in temp2:
-    #    temp3.append(name.split(" - "))
+    #print(temp1)
     #print()
-    #print(temp3)
+    #print(temp2)
+    #print()
     driver.quit()
     print(mls_data(temp2, temp1))

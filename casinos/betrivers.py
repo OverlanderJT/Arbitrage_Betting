@@ -96,19 +96,51 @@ def mls_data(html_names:list, html_bets:list) -> list:
     bets3 = []
     names1 = []
     names2 = []
-    for i in range(len(html_bets)):
-        if i % 5 == 0:
-            odd = singleconvert(html_bets[i])
+    temp_bets = []
+
+    for bet in html_bets:
+        if (('O' not in bet) and ('U' not in bet)):
+            temp_bets.append(bet)
+    
+    for i in range(len(temp_bets)):
+        odd = singleconvert(temp_bets[i])
+        if i % 3 == 0:
             bets1.append(odd)
-        elif i % 5 == 1:
-            odd = singleconvert(html_bets[i])
+        elif i % 3 == 1:
             bets2.append(odd)
-        elif i % 5 == 4:
-            odd = singleconvert(html_bets[i])
+        elif i % 3 == 2:
             bets3.append(odd)
 
     for i in range(len(html_names)):
-        name = html_names[i].split(' ')[-1]
+        name = html_names[i].replace("FC", "").replace("SC", "").replace(" ", "").replace("LA", "LosAngeles").replace("CF", "")
+        if ("CHIFire" == name):
+            name = "ChicagoFire"
+        if ("COLCrew" == name):
+            name = "ColumbusCrew"
+        if ("NERevolution" == name):
+            name = "NewEnglandRevolution"
+        if ("NYC" == name):
+            name = "NewYorkCity"
+        if ("ORLCity" == name):
+            name = "OrlandoCity"
+        if ("PHIUnion" == name):
+            name = "PhiladelphiaUnion"
+        if ("COLRapids" == name):
+            name = "ColoradoRapids"
+        if ("HOUDynamo" == name):
+            name = "HoustonDynamo"
+        if ("SportingKC" == name):
+            name = "SportingKansasCity"
+        if ("MINUnited" == name):
+            name = "MinnesotaUnited"
+        if ("PORTimbers" == name):
+            name = "PortlandTimbers"
+        if ("SJEarthquakes" == name):
+            name = "SanJoseEarthquakes"
+        if ("SEASounders" == name):
+            name = "SeattleSounders"
+        if ("VANWhitecaps" == name):
+            name = "VancouverWhitecaps"
         if i % 3 == 0:
             names1.append(name)
         elif i % 3 == 1:
@@ -128,8 +160,8 @@ if __name__ == '__main__':
     options = Options()
     options.headless = True
     driver = webdriver.Firefox(options=options)
-    driver.get('https://mi.betrivers.com/?page=sportsbook&group=1000093883&type=prematch#home')
-    time.sleep(10)
+    driver.get('https://mi.betrivers.com/?page=sportsbook&group=1000095063&type=prematch#home')
+    time.sleep(5)
     height = driver.execute_script("return document.body.scrollHeight")
     loop = True
     while (loop):
@@ -146,11 +178,14 @@ if __name__ == '__main__':
         temp1.append(bet.text)
     for name in driver_names:
         temp2.append(name.text)
-    # print(temp1)
-    # print(temp2)
+    print(temp1)
+    print()
+    print(temp2)
+    print()
 
-    #print(ufc_data(temp2, temp1))
-    temp = ufc_data(temp2, temp1)
+    #print(mls_data(temp2, temp1))
+    temp = mls_data(temp2, temp1)
     for item in temp:
+        print(len(item))
         print(item)
     driver.quit()

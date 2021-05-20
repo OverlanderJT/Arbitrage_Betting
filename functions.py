@@ -18,13 +18,13 @@ class Casino:
             self.html_names[sport] = None
             self.window_handles[sport] = None
 
-def alphabetize(names1:list, names2:list, bets1:list, bets2:list, bets3:list = []) -> list:
+def alphabetize(names1:list, names2:list, bets1:list, bets2:list, bets3:list = [nan]) -> list:
     #rearranges the fighters so that the first and second names are in alphabetical order
     for i in range(len(names1)):
         if names1[i] > names2[i]:
             names1[i], names2[i] = names2[i], names1[i] #swaps the names
             bets1[i], bets2[i] = bets2[i], bets1[i] #swaps the bets
-    if (bets3 != []): #In case there is a 3rd option, gives this as output
+    if (bets3 != [nan]): #In case there is a 3rd option, gives this as output
         return names1, names2, bets1, bets2, bets3
     else: #In the case there are only 2 options, gives this as output
         return names1, names2, bets1, bets2
