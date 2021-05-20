@@ -81,13 +81,25 @@ betrivers = Casino(
         'mlb':('https://mi.betrivers.com/?page=sportsbook&group=1000093616&type=prematch#home','participant--name', 'outcome-value'),
         'nhl':('https://mi.betrivers.com/?page=sportsbook&group=1000093657&type=prematch#home','participant--name', 'outcome-value'),
         'nba':('https://mi.betrivers.com/?page=sportsbook&group=1000093652&type=prematch#home','participant--name', 'outcome-value'),
-        'mls':('https://mi.betrivers.com/?page=sportsbook&group=1000095063&type=prematch#home','participant--name', 'outcome-value')
-        
+        'mls':('https://mi.betrivers.com/?page=sportsbook&group=1000095063&type=prematch#home','participant--name', 'outcome-value'),
     }
 )
 
+betriverslive = Casino( #this casino is for betrivers live games since they happen at a seperate url
+    usersports,
+    tag = ('br', br),
+    html_data={
+        'ufc':('https://mi.betrivers.com/?page=sportsbook&group=1000093883&type=live#home','participant--name', 'outcome-value'),
+        'mlb':('https://mi.betrivers.com/?page=sportsbook&group=1000093616&type=live#home','participant--name', 'outcome-value'),
+        'nhl':('https://mi.betrivers.com/?page=sportsbook&group=1000093657&type=live#home','participant--name', 'outcome-value'),
+        'nba':('https://mi.betrivers.com/?page=sportsbook&group=1000093652&type=live#home','participant--name', 'outcome-value'),
+        'mls':('https://mi.betrivers.com/?page=sportsbook&group=1000095063&type=live#home','participant--name', 'outcome-value'),
+    }
+)
+
+
 #must add each additional casino to the below tuple
-CASINOS = (fanduel,  betmgm, draftkings, betrivers)
+CASINOS = (fanduel,  betmgm, draftkings, betrivers, betriverslive)
 
 COLUMNS = {'Team 1':[nan],'Max Bet1':[nan],'Max Bet1 Casino':[nan],'Max Bet1 Conv':[nan],'Team 2':[nan],'Max Bet2':[nan],'Max Bet2 Casino':[nan],'Max Bet2 Conv':[nan]}
 BASEDF = DataFrame(data=COLUMNS)
@@ -95,11 +107,14 @@ COLUMNSDRAW = {'Team 1':[nan],'Max Bet1':[nan],'Max Bet1 Casino':[nan],'Max Bet1
 BASEDFDRAW = DataFrame(data=COLUMNSDRAW) #base dataframe for sports with 3 outcomes
 
 for casinoindex in range(len(CASINOS)):
-    BASEDF.insert(1,'Bet1 {}'.format(CASINOS[casinoindex].tag[0]),nan)
-    BASEDF.insert(casinoindex+6,'Bet2 {}'.format(CASINOS[casinoindex].tag[0]),nan)
-    BASEDFDRAW.insert(1,'Bet1 {}'.format(CASINOS[casinoindex].tag[0]),nan)
-    BASEDFDRAW.insert(casinoindex+6,'Bet2 {}'.format(CASINOS[casinoindex].tag[0]),nan)
-    BASEDFDRAW.insert((casinoindex*2)+10,'Bet Draw {}'.format(CASINOS[casinoindex].tag[0]),nan)
+    try: #tries for any duplicate columns for casinos that need to use a seperate Casino instance for live games
+        BASEDF.insert(1,'Bet1 {}'.format(CASINOS[casinoindex].tag[0]),nan)
+        BASEDF.insert(casinoindex+6,'Bet2 {}'.format(CASINOS[casinoindex].tag[0]),nan)
+        BASEDFDRAW.insert(1,'Bet1 {}'.format(CASINOS[casinoindex].tag[0]),nan)
+        BASEDFDRAW.insert(casinoindex+6,'Bet2 {}'.format(CASINOS[casinoindex].tag[0]),nan)
+        BASEDFDRAW.insert((casinoindex*2)+10,'Bet Draw {}'.format(CASINOS[casinoindex].tag[0]),nan)
+    except ValueError: #if this casino has already been added it goes to the next casino in the list
+        continue
 
 #need to add the sport to the dict below with a copy of its base dataframe "'sport':deepcopy(BASEDF)" or "'sport' = deepcopy(BASEDFDRAW)"
 SPORTS = {

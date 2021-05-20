@@ -96,21 +96,21 @@ def mls_data(html_names:list, html_bets:list) -> list:
     names1 = []
     names2 = []
     for i in range(len(html_bets)):
-        if i % 6 == 0:
+        if i % 5 == 0:
             odd = singleconvert(html_bets[i])
             bets1.append(odd)
-        elif i % 6 == 1:
+        elif i % 5 == 1:
             odd = singleconvert(html_bets[i])
             bets2.append(odd)
-        elif i % 6 == 4:
+        elif i % 5 == 4:
             odd = singleconvert(html_bets[i])
             bets3.append(odd)
 
     for i in range(len(html_names)):
         name = html_names[i].split(' ')[-1]
-        if i%3 == 0:
+        if i % 3 == 0:
             names1.append(name)
-        elif i%3 == 1:
+        elif i % 3 == 1:
             names2.append(name)
     return alphabetize(names1, names2, bets1, bets2, bets3)
     
