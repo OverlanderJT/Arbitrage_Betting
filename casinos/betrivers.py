@@ -7,13 +7,13 @@ def ufc_data(html_names:list, html_bets:list) -> list:
     names1 = []
     names2 = []
     for i in range(len(html_bets)):
-        print(i)
         odd = singleconvert(html_bets[i])
-        name = html_names[i].replace(' ','')
         if ',' in html_names[i]:
-            lastname = html_names[i].split(',')[0]
-            firstname = html_names[i].split(',')[1]
+            lastname = html_names[i].split(', ')[0]
+            firstname = html_names[i].split(', ')[1]
             name = firstname + lastname
+        else:
+            name = html_names[i].replace(' ','')
         if i%2 == 0:
             bets1.append(odd)
             names1.append(name)
@@ -24,19 +24,95 @@ def ufc_data(html_names:list, html_bets:list) -> list:
 
 
 def nhl_data(html_names:list, html_bets:list) -> list:
-    pass
+    bets1 = []
+    bets2 = []
+    names1 = []
+    names2 = []
+    for i in range(len(html_bets)):
+        if i % 6 == 2:
+            odd = singleconvert(html_bets[i])
+            bets1.append(odd)
+        elif i % 6 == 3:
+            odd = singleconvert(html_bets[i])
+            bets2.append(odd)
+
+    for i in range(len(html_names)):
+        name = html_names[i].split(' ')[-1]
+        if i%2 == 0:
+            names1.append(name)
+        elif i%2 ==1:
+            names2.append(name)
+    return alphabetize(names1, names2, bets1, bets2)
 
 
 def nba_data(html_names:list, html_bets:list) -> list:
-    pass
+    bets1 = []
+    bets2 = []
+    names1 = []
+    names2 = []
+    for i in range(len(html_bets)):
+        if i % 6 == 2:
+            odd = singleconvert(html_bets[i])
+            bets1.append(odd)
+        elif i % 6 == 3:
+            odd = singleconvert(html_bets[i])
+            bets2.append(odd)
+
+    for i in range(len(html_names)):
+        name = html_names[i].split(' ')[-1]
+        if i%2 == 0:
+            names1.append(name)
+        elif i%2 ==1:
+            names2.append(name)
+    return alphabetize(names1, names2, bets1, bets2)
 
 
 def mlb_data(html_names:list, html_bets:list) -> list:
-    pass
+    bets1 = []
+    bets2 = []
+    names1 = []
+    names2 = []
+    for i in range(len(html_bets)):
+        if i % 6 == 0:
+            odd = singleconvert(html_bets[i])
+            bets1.append(odd)
+        elif i % 6 == 1:
+            odd = singleconvert(html_bets[i])
+            bets2.append(odd)
+
+    for i in range(len(html_names)):
+        name = html_names[i].split(' ')[-1]
+        if i%2 == 0:
+            names1.append(name)
+        elif i%2 ==1:
+            names2.append(name)
+    return alphabetize(names1, names2, bets1, bets2)
 
 
 def mls_data(html_names:list, html_bets:list) -> list:
-    pass
+    bets1 = []
+    bets2 = []
+    bets3 = []
+    names1 = []
+    names2 = []
+    for i in range(len(html_bets)):
+        if i % 6 == 0:
+            odd = singleconvert(html_bets[i])
+            bets1.append(odd)
+        elif i % 6 == 1:
+            odd = singleconvert(html_bets[i])
+            bets2.append(odd)
+        elif i % 6 == 4:
+            odd = singleconvert(html_bets[i])
+            bets3.append(odd)
+
+    for i in range(len(html_names)):
+        name = html_names[i].split(' ')[-1]
+        if i%3 == 0:
+            names1.append(name)
+        elif i%3 == 1:
+            names2.append(name)
+    return alphabetize(names1, names2, bets1, bets2, bets3)
     
 
 if __name__ == '__main__':
@@ -50,7 +126,7 @@ if __name__ == '__main__':
     options = Options()
     options.headless = True
     driver = webdriver.Firefox(options=options)
-    driver.get('https://mi.betrivers.com/?page=sportsbook&group=1000093657&type=prematch#home')
+    driver.get('https://mi.betrivers.com/?page=sportsbook&group=1000095063&type=prematch#home')
     time.sleep(10)
     driver_bets = driver.find_elements(By.CLASS_NAME, 'outcome-value')
     driver_names = driver.find_elements(By.CLASS_NAME, 'participant--name')
@@ -58,9 +134,7 @@ if __name__ == '__main__':
         temp1.append(bet.text)
     for name in driver_names:
         temp2.append(name.text)
-    print(len(temp1))
-    print(len(temp2))
-    print(temp1)
-    print(temp2)
+    # print(temp1)
+    # print(temp2)
 
-    # print(nhl_data(temp2, temp1))
+    print(mls_data(temp2, temp1))

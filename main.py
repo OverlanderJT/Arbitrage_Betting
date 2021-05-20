@@ -78,12 +78,16 @@ betrivers = Casino(
     tag = ('br', br),
     html_data={
         'ufc':('https://mi.betrivers.com/?page=sportsbook&group=1000093883&type=prematch#home','participant--name', 'outcome-value'),
+        'mlb':('https://mi.betrivers.com/?page=sportsbook&group=1000093616&type=prematch#home','participant--name', 'outcome-value'),
         'nhl':('https://mi.betrivers.com/?page=sportsbook&group=1000093657&type=prematch#home','participant--name', 'outcome-value'),
+        'nba':('https://mi.betrivers.com/?page=sportsbook&group=1000093652&type=prematch#home','participant--name', 'outcome-value'),
+        'mls':('https://mi.betrivers.com/?page=sportsbook&group=1000095063&type=prematch#home','participant--name', 'outcome-value')
+        
     }
 )
 
 #must add each additional casino to the below tuple
-CASINOS = (fanduel,  betmgm, draftkings)
+CASINOS = (fanduel,  betmgm, draftkings, betrivers)
 
 COLUMNS = {'Team 1':[nan],'Max Bet1':[nan],'Max Bet1 Casino':[nan],'Max Bet1 Conv':[nan],'Team 2':[nan],'Max Bet2':[nan],'Max Bet2 Casino':[nan],'Max Bet2 Conv':[nan]}
 BASEDF = DataFrame(data=COLUMNS)
