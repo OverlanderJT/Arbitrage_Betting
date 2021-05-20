@@ -313,7 +313,7 @@ if __name__ == '__main__':
     options = Options()
     options.headless = True
     driver = webdriver.Firefox(options=options)
-    driver.get('https://sports.mi.betmgm.com/en/sports/football-4/betting/north-america-9/mls-33155')
+    driver.get('https://sports.mi.betmgm.com/en/sports/baseball-23/betting/north-america-9/mlb-75')
     time.sleep(5)
     driver_bets = driver.find_elements(By.CLASS_NAME, 'grid-group-container')
     driver_names = driver.find_elements(By.CLASS_NAME, 'participant')
@@ -326,4 +326,4 @@ if __name__ == '__main__':
     print(temp2)
     print()
     driver.quit()
-    print(mls_data(temp2, temp1))
+    print(mlb_data(temp2, temp1))

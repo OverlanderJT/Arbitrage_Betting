@@ -12,6 +12,7 @@ def ufc_data(html_names:list, html_bets:list) -> list:
             lastname = html_names[i].split(', ')[0]
             firstname = html_names[i].split(', ')[1]
             name = firstname + lastname
+            name = name.replace(' ', '')
         else:
             name = html_names[i].replace(' ','')
         if i%2 == 0:
@@ -114,6 +115,7 @@ def mls_data(html_names:list, html_bets:list) -> list:
             names2.append(name)
     return alphabetize(names1, names2, bets1, bets2, bets3)
     
+###################################################################
 
 if __name__ == '__main__':
     from selenium import webdriver
@@ -126,8 +128,18 @@ if __name__ == '__main__':
     options = Options()
     options.headless = True
     driver = webdriver.Firefox(options=options)
-    driver.get('https://mi.betrivers.com/?page=sportsbook&group=1000095063&type=prematch#home')
+    driver.get('https://mi.betrivers.com/?page=sportsbook&group=1000093883&type=prematch#home')
     time.sleep(10)
+    height = driver.execute_script("return document.body.scrollHeight")
+    loop = True
+    while (loop):
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(1)
+        new_height = driver.execute_script("return document.body.scrollHeight")
+        if (new_height == height):
+            loop = False
+        else:
+            height = new_height
     driver_bets = driver.find_elements(By.CLASS_NAME, 'outcome-value')
     driver_names = driver.find_elements(By.CLASS_NAME, 'participant--name')
     for bet in driver_bets:
@@ -137,4 +149,8 @@ if __name__ == '__main__':
     # print(temp1)
     # print(temp2)
 
-    print(mls_data(temp2, temp1))
+    #print(ufc_data(temp2, temp1))
+    temp = ufc_data(temp2, temp1)
+    for item in temp:
+        print(item)
+    driver.quit()

@@ -158,6 +158,17 @@ for casino in CASINOS:
         #print(driver.current_window_handle) #debug
         #print(casino.window_handles[sport]) #debug
         driver.switch_to.window(casino.window_handles[sport])
+        height = driver.execute_script("return document.body.scrollHeight")
+        loop = True
+        #This scrolls the window down to the bottom of the page to load in all the data
+        while (loop):
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            sleep(1)
+            new_height = driver.execute_script("return document.body.scrollHeight")
+            if (new_height == height):
+                loop = False
+            else:
+                height = new_height
         driver_bets = driver.find_elements(By.CLASS_NAME, casino.html_data[sport][2])
         driver_names = driver.find_elements(By.CLASS_NAME, casino.html_data[sport][1])
         for bet in driver_bets:
@@ -197,22 +208,24 @@ for casino in CASINOS:
             print('Unimplemented Sport') #this should never happen
 
 #calculate the arbs for each sport and generate the spreadsheets
-for casino in CASINOS:
-    for sport in usersports:
-        try: #Tests if this sport is in this casino. Skips if it is not
-            casino.html_data[sport]
-        except KeyError:
-            continue
-        print('Calculating ' + casino.tag[0] + ' ' + sport + ' arbs')
-        #need to add each additional sport to the relevent if statement
-        if sport == 'ufc' or sport == 'mlb' or sport == 'nba' or sport == 'nhl': #for any sport with only Win/Loss
-            SPORTS[sport] = arbs(SPORTS[sport],CASINOS)
-            opss(SPORTS[sport])
-        elif sport == 'mls': #for any sport with Win/Loss/Draw
-            SPORTS[sport] = arbs3outcome(SPORTS[sport],CASINOS)
-            opss3outcome(SPORTS[sport])
-        else:
-            print('Unimplemented Sport') #this should never happen
+for sport in usersports:
+    '''
+    try: #Tests if this sport is in this casino. Skips if it is not
+        casino.html_data[sport]
+    except KeyError:
+        continue
+    '''
+    #print('Calculating ' + casino.tag[0] + ' ' + sport + ' arbs')
+    print('Calculating ' + sport + ' arbs')
+    #need to add each additional sport to the relevent if statement
+    if sport == 'ufc' or sport == 'mlb' or sport == 'nba' or sport == 'nhl': #for any sport with only Win/Loss
+        SPORTS[sport] = arbs(SPORTS[sport],CASINOS)
+        opss(SPORTS[sport])
+    elif sport == 'mls': #for any sport with Win/Loss/Draw
+        SPORTS[sport] = arbs3outcome(SPORTS[sport],CASINOS)
+        opss3outcome(SPORTS[sport])
+    else:
+        print('Unimplemented Sport') #this should never happen
 
 clear() #clears the terminal before printing all of the dataframes
 
