@@ -301,6 +301,67 @@ def mls_data(html_names:list, html_bets:list) -> list:
 
     return alphabetize(names1, names2, bets1, bets2, bets3)
 
+def nfl_data(html_names:list, html_bets:list) -> list:
+    bets1 = []
+    bets2 = []
+    names1 = []
+    names2 = []
+    temp_bets = []
+
+    for line in html_bets:
+        temp_bets.append(line)
+    odd1 = "err"
+    odd2 = "err"
+
+    for item in temp_bets:
+        try:
+            a = int(item[-1])
+            a = -1
+        except:
+            a = 1
+            odd1 = -9999
+            odd2 = -9999
+        if (a < 0):
+            temp = ''
+            b = 0
+            for i in range(len(item)):
+                if (item[-1 * (i + 1)] == '\n'):
+                    odd2 = singleconvert(temp)
+                    temp = ''
+                    i += 1
+                elif ((item[-1 * (i + 1)] == '+') or (item[-1 * (i + 1)] == '-')):
+                    b += 1
+                    temp = item[-1 * (i + 1)] + temp
+                    if (b == 2):
+                        odd1 = singleconvert(temp)
+                        break
+                elif (item[-1 * (i + 1)] == '.'):
+                    odd1 = -9999
+                    odd2 = -9999
+                    break
+                else:
+                    temp = item[-1 * (i + 1)] + temp
+        bets1.append(odd1)
+        bets2.append(odd2)
+
+    del bets1[0]
+    del bets2[0]
+
+    for i in range(0, len(html_names)):
+        temp1 = html_names[i]
+        temp2 = ''
+        for j in range(len(temp1)):
+            if (temp1[-1*(j+1)] == " "):
+                break
+            else:
+                temp2 = temp1[-1*(j+1)] + temp2
+        if (i % 2 == 0):
+            names1.append(temp2)
+        elif (i % 2 == 1):
+            names2.append(temp2)
+
+    return alphabetize(names1, names2, bets1, bets2)
+
 ##########################################################
 
 if __name__ == '__main__':
@@ -314,7 +375,7 @@ if __name__ == '__main__':
     options = Options()
     options.headless = True
     driver = webdriver.Firefox(options=options)
-    driver.get('https://sports.mi.betmgm.com/en/sports/baseball-23/betting/north-america-9/mlb-75')
+    driver.get('https://sports.mi.betmgm.com/en/sports/football-11')
     time.sleep(5)
     driver_bets = driver.find_elements(By.CLASS_NAME, 'grid-group-container')
     driver_names = driver.find_elements(By.CLASS_NAME, 'participant')
@@ -327,4 +388,7 @@ if __name__ == '__main__':
     print(temp2)
     print()
     driver.quit()
-    print(mlb_data(temp2, temp1))
+    temp = nfl_data(temp2, temp1)
+    for item in temp:
+        print(len(item))
+        print(item)

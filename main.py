@@ -46,6 +46,7 @@ fanduel = Casino(
         'nhl':('https://sportsbook.fanduel.com/sports/navigation/1550.1/10329.3', 'name', 'sh'),
         'nba':('https://sportsbook.fanduel.com/sports/navigation/830.1/10107.3', 'name', 'sh'),
         'mls':('https://sportsbook.fanduel.com/sports/navigation/730.1/9507.1', 'name', 'sh'),
+        'nfl':('https://sportsbook.fanduel.com/sports/navigation/6227.1/14310.3', 'name', 'sh'),
     }
 )
 
@@ -58,6 +59,7 @@ betmgm = Casino(
         'nhl':('https://sports.mi.betmgm.com/en/sports/ice-hockey-12/betting/north-america-9/nhl-34', 'participant', 'grid-group-container'),
         'nba':('https://sports.mi.betmgm.com/en/sports/basketball-7/betting/north-america-9/nba-6004', 'participant', 'grid-group-container'),
         'mls':('https://sports.mi.betmgm.com/en/sports/football-4/betting/north-america-9/mls-33155', 'participant', 'grid-group-container'),
+        'nfl':('https://sports.mi.betmgm.com/en/sports/football-11', 'participant', 'grid-group-container'),
     }
 )
 
@@ -70,6 +72,7 @@ draftkings = Casino(
         'nhl':('https://sportsbook.draftkings.com/leagues/hockey/2022?category=game-lines&subcategory=game','event-cell__name','sportsbook-table__column-row'), 
         'nba':('https://sportsbook.draftkings.com/leagues/basketball/103?category=game-lines&subcategory=game','event-cell__name','sportsbook-table__column-row'),
         'mls':('https://sportsbook.draftkings.com/leagues/soccer/101?category=game-lines&subcategory=money-line-(regular-time)', 'sportsbook-event-accordion__title', 'sportsbook-outcome-cell'),
+        'nfl':('https://sportsbook.draftkings.com/leagues/football/3?category=game-lines&subcategory=game','event-cell__name','sportsbook-table__column-row'),
     }
 )
 

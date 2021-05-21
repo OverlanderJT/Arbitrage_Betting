@@ -146,6 +146,35 @@ def mls_data(html_names:list, html_bets:list) -> list:
             names2.append(name)
     return alphabetize(names1, names2, bets1, bets2, bets3)
 
+def nfl_data(html_names:list, html_bets:list) -> list:
+    bets1 = []
+    bets2 = []
+    names1 = []
+    names2 = []
+
+    for i in range(len(html_bets)):
+        odd = html_bets[i]
+        if (i % 6 == 2):
+            odd = singleconvert(odd)
+            bets1.append(odd)
+        elif (i % 6 == 3):
+            odd = singleconvert(odd)
+            bets2.append(odd)
+
+    for i in range(len(html_names)):
+        temp1 = html_names[i]
+        temp2 = ''
+        for j in range(len(temp1)):
+            if (temp1[-1 * (j + 1)] == " "):
+                break
+            else:
+                temp2 = temp1[-1 * (j + 1)] + temp2
+        if (i % 2 == 0):
+            names1.append(temp2)
+        elif (i % 2 == 1):
+            names2.append(temp2)
+    return alphabetize(names1, names2, bets1, bets2)
+
 ##############################################
 
 if __name__ == '__main__':
@@ -159,7 +188,7 @@ if __name__ == '__main__':
     options = Options()
     options.headless = True
     driver = webdriver.Firefox(options=options)
-    driver.get('https://sportsbook.fanduel.com/sports/navigation/730.1/9507.1')
+    driver.get('https://sportsbook.fanduel.com/sports/navigation/6227.1/14310.3')
     time.sleep(5)
     driver_bets = driver.find_elements(By.CLASS_NAME, 'sh')
     driver_names = driver.find_elements(By.CLASS_NAME, 'name')
@@ -172,4 +201,8 @@ if __name__ == '__main__':
     print(temp2)
     print()
     driver.quit()
-    print(mls_data(temp2, temp1))
+    #print(nfl_data(temp2, temp1))
+    temp = nfl_data(temp2, temp1)
+    for item in temp:
+        print(len(item))
+        print(item)

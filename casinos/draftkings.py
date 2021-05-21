@@ -214,6 +214,55 @@ def mls_data(html_names:list, html_bets:list) -> list:
             
     return alphabetize(names1, names2, bets1, bets2, bets3)
 
+def nfl_data(html_names:list, html_bets:list) -> list:
+    bets1 = []
+    bets2 = []
+    names1 = []
+    names2 = []
+    temp_bets = []
+    temp_names = []
+    a = -1
+
+    for item in html_bets:
+        if (("+" in item) or ("-" in item) or (item == "")):
+            temp_bets.append(item)
+    
+    for i in range(len(html_names)):
+        temp1 = html_names[i].replace("\n", "").replace("\t", "")
+        temp2 = ''
+        for j in range(len(temp1)):
+            if (temp1[-1 * (j + 1)] == " "):
+                break
+            else:
+                try:
+                    a = int(temp1[-1 * (j + 1)])
+                except:
+                    a = -1
+                if (a < 0):
+                    temp2 = temp1[-1 * (j + 1)] + temp2
+        if (temp2 == "ers"):
+            temp2 = "49" + temp2
+            
+        temp_names.append(temp2)
+
+    for i in range(len(temp_bets)):
+        try:
+            odd = singleconvert(temp_bets[i])
+        except:
+            odd = -9999
+        if (i % 6 == 2):
+            bets1.append(odd)
+        elif (i % 6 == 5):
+            bets2.append(odd)
+            
+    for i in range(len(temp_names)):
+        if (i % 2 == 0):
+            names1.append(temp_names[i])
+        elif (i % 2 == 1):
+            names2.append(temp_names[i])
+            
+    return alphabetize(names1, names2, bets1, bets2)
+
 ####################################################################
 if __name__ == '__main__':
     from selenium import webdriver
@@ -226,7 +275,7 @@ if __name__ == '__main__':
     options = Options()
     options.headless = True
     driver = webdriver.Firefox(options=options)
-    driver.get('https://sportsbook.draftkings.com/leagues/basketball/103?category=game-lines&subcategory=game')
+    driver.get('https://sportsbook.draftkings.com/leagues/football/3?category=game-lines&subcategory=game')
     driver_bets = driver.find_elements(By.CLASS_NAME, 'sportsbook-table__column-row')
     driver_names = driver.find_elements(By.CLASS_NAME, 'event-cell__name')
     for bet in driver_bets:
@@ -239,7 +288,7 @@ if __name__ == '__main__':
     #print()
     driver.quit()
     #print(nba_data(temp2, temp1))
-    temp = nba_data(temp2, temp1)
+    temp = nfl_data(temp2, temp1)
     for item in temp:
         print(len(item))
         print(item)
