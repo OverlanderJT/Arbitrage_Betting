@@ -29,12 +29,18 @@ def nhl_data(html_names:list, html_bets:list) -> list:
     bets2 = []
     names1 = []
     names2 = []
-    for i in range(len(html_bets)):
-        if i % 6 == 2:
-            odd = singleconvert(html_bets[i])
+    temp_bets = []
+
+    for item in html_bets:
+        if (("." not in item) and ("\n" not in item)):
+            temp_bets.append(item)
+            
+    for i in range(len(temp_bets)):
+        if i % 2 == 0:
+            odd = singleconvert(temp_bets[i])
             bets1.append(odd)
-        elif i % 6 == 3:
-            odd = singleconvert(html_bets[i])
+        elif i % 2 == 1:
+            odd = singleconvert(temp_bets[i])
             bets2.append(odd)
 
     for i in range(len(html_names)):
@@ -51,12 +57,18 @@ def nba_data(html_names:list, html_bets:list) -> list:
     bets2 = []
     names1 = []
     names2 = []
-    for i in range(len(html_bets)):
-        if i % 6 == 2:
-            odd = singleconvert(html_bets[i])
+    temp_bets = []
+
+    for item in html_bets:
+        if (("." not in item) and ("\n" not in item)):
+            temp_bets.append(item)
+            
+    for i in range(len(temp_bets)):
+        if i % 2 == 0:
+            odd = singleconvert(temp_bets[i])
             bets1.append(odd)
-        elif i % 6 == 3:
-            odd = singleconvert(html_bets[i])
+        elif i % 2 == 1:
+            odd = singleconvert(temp_bets[i])
             bets2.append(odd)
 
     for i in range(len(html_names)):
@@ -73,12 +85,18 @@ def mlb_data(html_names:list, html_bets:list) -> list:
     bets2 = []
     names1 = []
     names2 = []
-    for i in range(len(html_bets)):
-        if i % 6 == 0:
-            odd = singleconvert(html_bets[i])
+    temp_bets = []
+
+    for item in html_bets:
+        if (("." not in item) and ("\n" not in item)):
+            temp_bets.append(item)
+            
+    for i in range(len(temp_bets)):
+        if i % 2 == 0:
+            odd = singleconvert(temp_bets[i])
             bets1.append(odd)
-        elif i % 6 == 1:
-            odd = singleconvert(html_bets[i])
+        elif i % 2 == 1:
+            odd = singleconvert(temp_bets[i])
             bets2.append(odd)
 
     for i in range(len(html_names)):
@@ -160,7 +178,7 @@ if __name__ == '__main__':
     options = Options()
     options.headless = True
     driver = webdriver.Firefox(options=options)
-    driver.get('https://mi.betrivers.com/?page=sportsbook&group=1000095063&type=prematch#home')
+    driver.get('https://mi.betrivers.com/?page=sportsbook&group=1000093883&type=prematch#home')
     time.sleep(5)
     height = driver.execute_script("return document.body.scrollHeight")
     loop = True
@@ -184,7 +202,7 @@ if __name__ == '__main__':
     print()
 
     #print(mls_data(temp2, temp1))
-    temp = mls_data(temp2, temp1)
+    temp = ufc_data(temp2, temp1)
     for item in temp:
         print(len(item))
         print(item)
