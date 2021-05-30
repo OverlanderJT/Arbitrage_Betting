@@ -1,17 +1,40 @@
 from numpy import nan
 import xlsxwriter as xl
 import pandas as pd
+import os
 
+class Casino:
 
-def alphabetize(names1:list, names2:list, bets1:list, bets2:list, bets3:list = []) -> list:
+    def __init__(self, sportlist:list, tag:tuple, html_data:dict):
+        self.tag = tag
+        self.html_data = html_data
+        self.html_bets = {}
+        self.html_names = {}
+        self.window_handles = {}
+        self.num_of_sports = len(self.html_data)
+
+        for sport in sportlist:
+            self.html_bets[sport] = None
+            self.html_names[sport] = None
+            self.window_handles[sport] = None
+
+def alphabetize(names1:list, names2:list, bets1:list, bets2:list, bets3:list = [nan]) -> list:
     #rearranges the fighters so that the first and second names are in alphabetical order
     for i in range(len(names1)):
         if names1[i] > names2[i]:
             names1[i], names2[i] = names2[i], names1[i] #swaps the names
             bets1[i], bets2[i] = bets2[i], bets1[i] #swaps the bets
-    if (bets3 != []):
+    for i in range(1, len(names1) - 1):
+        k = 0
+        for j in range(0, len(names1) - i):
+            if ((names1[-i] == names1[j]) and (names2[-i] == names2[j])):
+                k += 1
+        if (k != 0):
+            names1[-i] += str(k)
+            names2[-i] += str(k)
+    if (bets3 != [nan]): #In case there is a 3rd option, gives this as output
         return names1, names2, bets1, bets2, bets3
-    else:
+    else: #In the case there are only 2 options, gives this as output
         return names1, names2, bets1, bets2
 
 def singleconvert(odd:str) -> int:
@@ -44,12 +67,10 @@ def makedf_all(df:pd.DataFrame, names1:list, names2:list, bets1:list, bets2:list
 def arbs(df:pd.DataFrame, casinolist:list) -> pd.DataFrame:
     #finds the max bets
     df['Max Bet1'] = df.iloc[:,1:len(casinolist)+1].max(axis=1)
-    df['Max Bet1 Casino'] = df.iloc[:,1:len(casinolist)+1].idxmax(axis='columns').str[-2:] #if there is an error here, remove '.str[-2:]' and uncomment the line below
-    # df['Max Bet1 Casino'] = df['Max Bet1 Casino'].str[-2:]
+    df['Max Bet1 Casino'] = df.iloc[:,1:len(casinolist)+1].idxmax(axis=1).str[-2:]
 
     df['Max Bet2'] = df.iloc[:,(5+len(casinolist)):len(casinolist)+(5+len(casinolist))].max(axis=1)
-    df['Max Bet2 Casino'] = df.iloc[:,(5+len(casinolist)):len(casinolist)+(5+len(casinolist))].idxmax(axis='columns').str[-2:] #if there is an error here, remove '.str[-2:]' and uncomment the line below
-    # df['Max Bet2 Casino'] = df['Max Bet2 Casino'][-2:]
+    df['Max Bet2 Casino'] = df.iloc[:,(5+len(casinolist)):len(casinolist)+(5+len(casinolist))].idxmax(axis=1).str[-2:]
 
     #converts max bets to non american odds
     df.loc[df['Max Bet1'] < 0, 'Max Bet1 Conv'] = (-100 / df['Max Bet1']) + 1
@@ -61,7 +82,7 @@ def arbs(df:pd.DataFrame, casinolist:list) -> pd.DataFrame:
     df['Arb value'] = (1 / df['Max Bet1 Conv']) + (1 / df['Max Bet2 Conv'])
     df.loc[df['Arb value'] <= 1, 'Arb'] = True
     df = df.fillna(value={'Arb':False})
-    df = df.fillna(0)
+    #df = df.fillna(0)
 
     return df
 
@@ -117,13 +138,13 @@ def opss(df:pd.DataFrame):
         sheet1.write_formula('D4', '=((B2*C2)-(B2+C2))/(B2+C2)', bottom_border_format_percent)
         sheet1.set_column('D:D', 19)
         wb.close()
+        os.startfile('arbs\{} vs {}.xlsx'.format(tempdf.at[i, 'Team 1'], tempdf.at[i, 'Team 2']))
 
 def makedf_all3outcome(df:pd.DataFrame, names1:list, names2:list, bets1:list, bets2:list, bets3:list, casino:str) -> pd.DataFrame:
     #adds all of the fights to the final df, combining when it can
-
     bet1 = 'Bet1 {}'.format(casino)
     bet2 = 'Bet2 {}'.format(casino)
-    bet3 = 'Bet3 {}'.format(casino)
+    bet3 = 'Bet Draw {}'.format(casino)
 
     #compares the df_all to the new df being added. If the fight names match, adds the bets, if not, adds the new fight to the end of the df.
     #this makes it so that this can be used for an infinite amount of casinos (assuming the relavent columns have been added)
@@ -139,32 +160,29 @@ def makedf_all3outcome(df:pd.DataFrame, names1:list, names2:list, bets1:list, be
     return df
 
 def arbs3outcome(df:pd.DataFrame,casinolist:list) -> pd.DataFrame:
-    #finds the max bets
+    #finds the max bets and the casino that the max bets belongs to
     df['Max Bet1'] = df.iloc[:, 1:len(casinolist) + 1].max(axis=1)
-    df['Max Bet1 Casino'] = df.iloc[:, 1:len(casinolist) + 1].idxmax(axis='columns').str[-2:] #if there is an error here, remove '.str[-2:]' and uncomment the line below
-    # df['Max Bet1 Casino'] = df['Max Bet1 Casino'].str[-2:]
+    df['Max Bet1 Casino'] = df.iloc[:, 1:len(casinolist) + 1].idxmax(axis=1).str[-2:]
 
-    df['Max Bet2'] = df.iloc[:, (5 + len(casinolist)):len(casinolist) + (5 + len(casinolist))].max(axis=1)
-    df['Max Bet2 Casino'] = df.iloc[:, (5 + len(casinolist)):len(casinolist) + (5 + len(casinolist))].idxmax(axis='columns').str[-2:] #if there is an error here, remove '.str[-2:]' and uncomment the line below
-    # df['Max Bet2 Casino'] = df['Max Bet2 Casino'].str[-2:]
-    #you will have to change the 5 to something else. Idk what it should be yet
-    df['Max Bet3'] = df.iloc[:, (5 + len(casinolist)):len(casinolist) + (5 + len(casinolist))].max(axis=1)
-    df['Max Bet3 Casino'] = df.iloc[:, (5 + len(casinolist)):len(casinolist) + (5 + len(casinolist))].idxmax(axis='columns').str[-2:] #if there is an error here, remove '.str[-2:]' and uncomment the line below
-    # df['Max Bet3 Casino'] = df['Max Bet3 Casino'].str[-2:]
+    df['Max Bet2'] = df.iloc[:, (5 + len(casinolist)):(5 + len(casinolist)*2)].max(axis=1)
+    df['Max Bet2 Casino'] = df.iloc[:, (5 + len(casinolist)):(5 + len(casinolist)*2)].idxmax(axis=1).str[-2:]
+
+    df['Max Bet Draw'] = df.iloc[:, (8 + len(casinolist)*2):(8 + len(casinolist)*3)].max(axis=1)
+    df['Max Bet Draw Casino'] = df.iloc[:, (8 + len(casinolist)*2):(8 + len(casinolist)*3)].idxmax(axis=1).str[-2:]
 
     #converts max bets to non american odds
     df.loc[df['Max Bet1'] < 0, 'Max Bet1 Conv'] = (-100 / df['Max Bet1']) + 1
     df.loc[df['Max Bet1'] > 0, 'Max Bet1 Conv'] = (df['Max Bet1'] / 100) + 1
     df.loc[df['Max Bet2'] < 0, 'Max Bet2 Conv'] = (-100 / df['Max Bet2']) + 1
     df.loc[df['Max Bet2'] > 0, 'Max Bet2 Conv'] = (df['Max Bet2'] / 100) + 1
-    df.loc[df['Max Bet3'] < 0, 'Max Bet3 Conv'] = (-100 / df['Max Bet3']) + 1
-    df.loc[df['Max Bet3'] > 0, 'Max Bet3 Conv'] = (df['Max Bet3'] / 100) + 1
+    df.loc[df['Max Bet Draw'] < 0, 'Max Bet Draw Conv'] = (-100 / df['Max Bet Draw']) + 1
+    df.loc[df['Max Bet Draw'] > 0, 'Max Bet Draw Conv'] = (df['Max Bet Draw'] / 100) + 1
 
     #calculates arbs and fill NaN values
-    df['Arb value'] = (1 / df['Max Bet1 Conv']) + (1 / df['Max Bet2 Conv']) + (1 / df['Max Bet3 Conv'])
+    df['Arb value'] = (1 / df['Max Bet1 Conv']) + (1 / df['Max Bet2 Conv']) + (1 / df['Max Bet Draw Conv'])
     df.loc[df['Arb value'] <= 1, 'Arb'] = True
     df = df.fillna(value={'Arb': False})
-    df = df.fillna(0)
+    # df = df.fillna(0)
 
     return df
 
@@ -194,8 +212,8 @@ def opss3outcome(df:pd.DataFrame):
         sheet1.write('C2', tempdf.at[l, 'Max Bet2 Conv'], bottom_border_format)
         sheet1.write('C3', tempdf.at[l, 'Max Bet2 Casino'], bottom_border_format)
         sheet1.write('D1', 'Draw', top_border_format)
-        sheet1.write('D2', tempdf.at[l, 'Max Bet3 Conv'], bottom_border_format)
-        sheet1.write('D3', tempdf.at[l, 'Max Bet3 Casino'], bottom_border_format)
+        sheet1.write('D2', tempdf.at[l, 'Max Bet Draw Conv'], bottom_border_format)
+        sheet1.write('D3', tempdf.at[l, 'Max Bet Draw Casino'], bottom_border_format)
 
         sheet1.write('E1', 'Arb', top_border_format)
         sheet1.write_formula('E2', '=(1/B2) + (1/C2) + (1/D2)', bottom_border_format)
@@ -229,3 +247,4 @@ def opss3outcome(df:pd.DataFrame):
         sheet1.set_column('E:E', 19)
 
         wb.close()
+        os.startfile('arbs\{} vs {}.xlsx'.format(tempdf.at[l, 'Team 1'], tempdf.at[l, 'Team 2']))

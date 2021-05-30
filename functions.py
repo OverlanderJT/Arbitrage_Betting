@@ -24,6 +24,15 @@ def alphabetize(names1:list, names2:list, bets1:list, bets2:list, bets3:list = [
         if names1[i] > names2[i]:
             names1[i], names2[i] = names2[i], names1[i] #swaps the names
             bets1[i], bets2[i] = bets2[i], bets1[i] #swaps the bets
+    
+    for i in range(1, len(names1) - 1):
+        k = 0
+        for j in range(0, len(names1) - i):
+            if ((names1[-i] == names1[j]) and (names2[-i] == names2[j])):
+                k += 1
+        if (k != 0):
+            names1[-i] += str(k)
+            names2[-i] += str(k)
     if (bets3 != [nan]): #In case there is a 3rd option, gives this as output
         return names1, names2, bets1, bets2, bets3
     else: #In the case there are only 2 options, gives this as output
@@ -35,7 +44,7 @@ def singleconvert(odd:str) -> int:
     try:
         convint = int(odd.replace("+", ""))
     except:
-        convint = -9999
+        convint = -9999999
     return convint
 
 def makedf_all(df:pd.DataFrame, names1:list, names2:list, bets1:list, bets2:list, casino:str) -> pd.DataFrame:
