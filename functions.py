@@ -1,7 +1,7 @@
 from numpy import nan
 import xlsxwriter as xl
 import pandas as pd
-
+import os
 
 class Casino:
 
@@ -130,6 +130,7 @@ def opss(df:pd.DataFrame):
         sheet1.write_formula('D4', '=((B2*C2)-(B2+C2))/(B2+C2)', bottom_border_format_percent)
         sheet1.set_column('D:D', 19)
         wb.close()
+        os.startfile('arbs\{} vs {}.xlsx'.format(tempdf.at[i, 'Team 1'], tempdf.at[i, 'Team 2']))
 
 def makedf_all3outcome(df:pd.DataFrame, names1:list, names2:list, bets1:list, bets2:list, bets3:list, casino:str) -> pd.DataFrame:
     #adds all of the fights to the final df, combining when it can
@@ -238,3 +239,4 @@ def opss3outcome(df:pd.DataFrame):
         sheet1.set_column('E:E', 19)
 
         wb.close()
+        os.startfile('arbs\{} vs {}.xlsx'.format(tempdf.at[l, 'Team 1'], tempdf.at[l, 'Team 2']))

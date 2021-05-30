@@ -68,8 +68,8 @@ draftkings = Casino(
     tag=('dk', dk),
     html_data={
         'ufc':('https://sportsbook.draftkings.com/leagues/mma/2162?category=fight-lines&subcategory=moneyline','sportsbook-outcome-cell__label','sportsbook-outcome-cell__element'), 
-        'mlb':('https://sportsbook.draftkings.com/leagues/baseball/2003?category=game-lines-&subcategory=game','event-cell__name','sportsbook-table__column-row'), 
-        'nhl':('https://sportsbook.draftkings.com/leagues/hockey/2022?category=game-lines&subcategory=game','event-cell__name','sportsbook-table__column-row'), 
+        'mlb':('https://sportsbook.draftkings.com/leagues/baseball/2003?category=game-lines-&subcategory=game','event-cell__name','sportsbook-table__column-row'),
+        'nhl':('https://sportsbook.draftkings.com/leagues/hockey/2022?category=game-lines&subcategory=game','event-cell__name','sportsbook-table__column-row'),
         'nba':('https://sportsbook.draftkings.com/leagues/basketball/103?category=game-lines&subcategory=game','event-cell__name','sportsbook-table__column-row'),
         'mls':('https://sportsbook.draftkings.com/leagues/soccer/101?category=game-lines&subcategory=money-line-(regular-time)', 'sportsbook-event-accordion__title', 'sportsbook-outcome-cell'),
         'nfl':('https://sportsbook.draftkings.com/leagues/football/3?category=game-lines&subcategory=game','event-cell__name','sportsbook-table__column-row'),
