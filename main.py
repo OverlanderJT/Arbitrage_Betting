@@ -101,9 +101,9 @@ betriverslive = Casino( #this casino is for betrivers live games since they happ
 )
 
 
-#must add each additional casino to the below tuple
-CASINOS = (fanduel,  betmgm, draftkings, betrivers, betriverslive)
-
+#must add each additional casino to the below tuple. 
+#for casinos with a seperate live casino and future casino, put the live casino before the future
+CASINOS = (fanduel,  betmgm, draftkings, betriverslive, betrivers)
 COLUMNS = {'Team 1':[nan],'Max Bet1':[nan],'Max Bet1 Casino':[nan],'Max Bet1 Conv':[nan],'Team 2':[nan],'Max Bet2':[nan],'Max Bet2 Casino':[nan],'Max Bet2 Conv':[nan]}
 BASEDF = DataFrame(data=COLUMNS)
 COLUMNSDRAW = {'Team 1':[nan],'Max Bet1':[nan],'Max Bet1 Casino':[nan],'Max Bet1 Conv':[nan],'Team 2':[nan],'Max Bet2':[nan],'Max Bet2 Casino':[nan],'Max Bet2 Conv':[nan], 'Max Bet Draw':[nan],'Max Bet Draw Casino':[nan],'Max Bet Draw Conv':[nan]}
@@ -181,6 +181,19 @@ for casino in CASINOS:
         casino.html_bets[sport] = temp1
         casino.html_names[sport] = temp2
 driver.quit()
+
+#combines the live casinos with their other casino
+for i in range(len(CASINOS)):
+    try:
+        CASINOS[i+1]
+    except IndexError:
+        break
+    else:
+        if CASINOS[i].tag[0] == CASINOS[i+1].tag[0]:
+            for sport in CASINOS[i].html_data:
+                CASINOS[i].html_names[sport].append(CASINOS[i+1].html_names[sport])
+                CASINOS[i].html_bets[sport].append(CASINOS[i+1].html_bets[sport])
+            del CASINOS[i+1] #removes the future casino since all of its data is now in the live casino
 
 #sort the data for each casino and sport and create the dataframes for each sport
 for casino in CASINOS:
