@@ -37,9 +37,9 @@ if __name__ == '__main__':
     options = Options()
     options.headless = True
     driver = webdriver.Firefox(options=options)
-    driver.get('https://mi.pointsbet.com/sports/mma/UFC')
+    driver.get('https://mi.pointsbet.com/sports/ice-hockey/NHL')
     time.sleep(5)
-    driver_bets = driver.find_elements(By.CLASS_NAME, 'f10krlro.f1a0sb7x.f14nmd6v')
+    driver_bets = driver.find_elements(By.CLASS_NAME, 'f1t29imj.f1yn18fe.f93i66z')
     driver_names = driver.find_elements(By.CLASS_NAME, 'fsu5r7i')
     for bet in driver_bets:
         temp1.append(bet.text)
@@ -51,7 +51,7 @@ if __name__ == '__main__':
     print()
     driver.quit()
     #print(nfl_data(temp2, temp1))
-    temp = ufc_data(temp2, temp1)
-    for item in temp:
-        print(len(item))
-        print(item)
+    #temp = ufc_data(temp2, temp1)
+    #for item in temp:
+    #    print(len(item))
+    #    print(item)
