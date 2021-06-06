@@ -18,6 +18,36 @@ def ufc_data(html_names:list, html_bets:list) -> list:
             names2.append(name)
     return alphabetize(names1, names2, bets1, bets2)
 
+def nhl_data(html_names:list, html_bets:list) -> list:
+    bets1 = []
+    bets2 = []
+    names1 = []
+    names2 = []
+    temp_data = []
+
+    for item in html_bets:
+        split_game = item.split("\n")
+        a = 1
+        for i in range(3, len(split_game)):
+            if (("." in split_game[i]) or ("Ov " in split_game[i]) or ("Un " in split_game[i])):
+                a = -2
+
+            if (a >= 0):
+                temp_data.append(split_game[i])
+            a += 1
+        name1 = temp_data[0].split(" ")
+        name2 = temp_data[2].split(" ")
+        try:
+            names1.append(name1[-1])
+            bets1.append(temp_data[1])
+            names2.append(name2[-1])
+            bets2.append(temp_data[3])
+        except:
+            pass
+        temp_data = []
+
+    return alphabetize(names1, names2, bets1, bets2)
+
 ##############################################
 
 if __name__ == '__main__':
@@ -26,6 +56,11 @@ if __name__ == '__main__':
     https://mi.pointsbet.com/sports/mma/UFC
     name: fsu5r7i
     bets: f10krlro.f1a0sb7x.f14nmd6v
+
+    nhl
+    https://mi.pointsbet.com/sports/ice-hockey/NHL
+    name: fsu5r7i
+    bets: f1t29imj.f1yn18fe.f93i66z
     '''
     from selenium import webdriver
     from selenium.webdriver.firefox.options import Options
@@ -50,8 +85,7 @@ if __name__ == '__main__':
     print(temp2)
     print()
     driver.quit()
-    #print(nfl_data(temp2, temp1))
-    #temp = ufc_data(temp2, temp1)
-    #for item in temp:
-    #    print(len(item))
-    #    print(item)
+    temp = nhl_data(temp2, temp1)
+    for item in temp:
+        print(len(item))
+        print(item)
