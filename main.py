@@ -190,7 +190,7 @@ for i in range(len(CASINOS)):
         break
     else:
         if CASINOS[i].tag[0] == CASINOS[i+1].tag[0]:
-            for sport in CASINOS[i].html_data:
+            for sport in CASINOS[i].html_names:
                 for j in range(len(CASINOS[i].html_names[sport])):
                     CASINOS[i].html_names[sport].append(CASINOS[i+1].html_names[sport][j])
                     CASINOS[i].html_bets[sport].append(CASINOS[i+1].html_bets[sport][j])

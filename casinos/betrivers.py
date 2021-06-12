@@ -164,6 +164,10 @@ def mls_data(html_names:list, html_bets:list) -> list:
         elif i % 3 == 1:
             names2.append(name)
     return alphabetize(names1, names2, bets1, bets2, bets3)
+
+
+    def nfl_data(html_names:list, html_bets:list) -> list:
+        return alphabetize(names1, names2, bets1, bets2)
     
 ###################################################################
 
