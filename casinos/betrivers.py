@@ -182,7 +182,7 @@ if __name__ == '__main__':
     options = Options()
     options.headless = True
     driver = webdriver.Firefox(options=options)
-    driver.get('https://mi.betrivers.com/?page=sportsbook&group=1000093883&type=prematch#home')
+    driver.get('https://mi.betrivers.com/?page=sportsbook&group=1000093652&type=prematch#home')
     time.sleep(5)
     height = driver.execute_script("return document.body.scrollHeight")
     loop = True
@@ -206,7 +206,7 @@ if __name__ == '__main__':
     print()
 
     #print(mls_data(temp2, temp1))
-    temp = ufc_data(temp2, temp1)
+    temp = nba_data(temp2, temp1)
     for item in temp:
         print(len(item))
         print(item)

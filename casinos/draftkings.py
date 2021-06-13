@@ -53,6 +53,8 @@ def nhl_data(html_names:list, html_bets:list) -> list:
                     a = -1
                 if (a < 0):
                     temp2 = temp1[-1 * (j + 1)] + temp2
+        if (temp2 == "ers"):
+            temp2 = "76" + temp2
         temp_names.append(temp2)
 
     for i in range(len(temp_bets)):
@@ -99,6 +101,9 @@ def nba_data(html_names:list, html_bets:list) -> list:
                     a = -1
                     if (a < 0):
                         temp2 = temp1[-1 * (j + 1)] + temp2
+        if (temp2 == "ers"):
+            temp2 = "76" + temp2
+            
         temp_names.append(temp2)
 
     for i in range(len(temp_bets)):
@@ -117,8 +122,7 @@ def nba_data(html_names:list, html_bets:list) -> list:
         elif (i % 2 == 1):
             names2.append(temp_names[i])
     
-    #return alphabetize(names1, names2, bets1, bets2)
-    return names1, names2, bets1, bets2
+    return alphabetize(names1, names2, bets1, bets2)
 
 #This function might only work in the case of the games happening the same day
 #I'm not entirely sure why this one works the way it does, but until it breaks I'm not touching it
@@ -240,8 +244,6 @@ def nfl_data(html_names:list, html_bets:list) -> list:
                     a = -1
                 if (a < 0):
                     temp2 = temp1[-1 * (j + 1)] + temp2
-        if (temp2 == "ers"):
-            temp2 = "49" + temp2
             
         temp_names.append(temp2)
 
@@ -275,7 +277,7 @@ if __name__ == '__main__':
     options = Options()
     options.headless = True
     driver = webdriver.Firefox(options=options)
-    driver.get('https://sportsbook.draftkings.com/leagues/football/3?category=game-lines&subcategory=game')
+    driver.get('https://sportsbook.draftkings.com/leagues/basketball/103?category=game-lines&subcategory=game')
     driver_bets = driver.find_elements(By.CLASS_NAME, 'sportsbook-table__column-row')
     driver_names = driver.find_elements(By.CLASS_NAME, 'event-cell__name')
     for bet in driver_bets:
@@ -288,7 +290,7 @@ if __name__ == '__main__':
     #print()
     driver.quit()
     #print(nba_data(temp2, temp1))
-    temp = nfl_data(temp2, temp1)
+    temp = nba_data(temp2, temp1)
     for item in temp:
         print(len(item))
         print(item)

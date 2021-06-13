@@ -103,7 +103,7 @@ betriverslive = Casino( #this casino is for betrivers live games since they happ
 
 #must add each additional casino to the below tuple. 
 #for casinos with a seperate live casino and future casino, put the live casino before the future
-CASINOS = (fanduel,  betmgm, draftkings, betriverslive, betrivers)
+CASINOS = [fanduel,  betmgm, draftkings, betriverslive, betrivers]
 COLUMNS = {'Team 1':[nan],'Max Bet1':[nan],'Max Bet1 Casino':[nan],'Max Bet1 Conv':[nan],'Team 2':[nan],'Max Bet2':[nan],'Max Bet2 Casino':[nan],'Max Bet2 Conv':[nan]}
 BASEDF = DataFrame(data=COLUMNS)
 COLUMNSDRAW = {'Team 1':[nan],'Max Bet1':[nan],'Max Bet1 Casino':[nan],'Max Bet1 Conv':[nan],'Team 2':[nan],'Max Bet2':[nan],'Max Bet2 Casino':[nan],'Max Bet2 Conv':[nan], 'Max Bet Draw':[nan],'Max Bet Draw Casino':[nan],'Max Bet Draw Conv':[nan]}
@@ -180,6 +180,11 @@ for casino in CASINOS:
             temp2.append(name.text)
         casino.html_bets[sport] = temp1
         casino.html_names[sport] = temp2
+        #debug
+        print(temp1)
+        print()
+        print(temp2)
+        print()
 driver.quit()
 
 #combines the live casinos with their other casino
