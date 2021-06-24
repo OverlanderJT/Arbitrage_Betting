@@ -1,8 +1,5 @@
 from functions import alphabetize, singleconvert
-from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.common.by import By
-import time
+
 
 def ufc_data(html_names:list, html_bets:list) -> list:
     bets1 = []

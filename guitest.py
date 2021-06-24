@@ -1,124 +1,9 @@
-from tkinter import *
-from tkinter import messagebox
-from tkscrolledframe import ScrolledFrame
+import sys
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 from pandas import *
 from numpy import nan
-
-
-def selectall():
-    var1.set(1)
-    var2.set(1)
-    var3.set(1)
-    var4.set(1)
-    var5.set(1)
-    var6.set(1)
-
-
-def deselectall():
-    var1.set(0)
-    var2.set(0)
-    var3.set(0)
-    var4.set(0)
-    var5.set(0)
-    var6.set(0)
-
-
-def getarb():
-    if var1.get() == 1:
-        print('UFC')
-    if var2.get() == 1:
-        print('NBA')
-    if var3.get() == 1:
-        print('NHL')
-    if var4.get() == 1:
-        print('MLB')
-    if var5.get() == 1:
-        print('Soccer')
-    if var6.get() == 1:
-        print('NFL')
-
-
-def expandgame(row, column, df):
-    dataframeindex = (row * 6) + column
-    name1 = df.at[dataframeindex, 'Name1']
-    name2 = df.at[dataframeindex, 'Name2']
-    maxbet1 = df.at[dataframeindex, 'Max Bet1 Conv']
-    maxbet2 = df.at[dataframeindex, 'Max Bet2 Conv']
-
-    def calculatebets():
-        try:
-            float(totalbetentry.get())
-        except ValueError:
-            messagebox.showinfo(parent=expandroot, message='Invalid Entry. Float numbers only')
-            return
-        betA = round(float(totalbetentry.get()) / (1 + (float(maxbet1) / float(maxbet2))), 2)
-        betB = round(float(totalbetentry.get()) / (1 + (float(maxbet2) / float(maxbet1))), 2)
-        profitA = round(betA * (float(maxbet1) - 1) - betB, 2)
-        profitB = round(betB * (float(maxbet2) - 1) - betA, 2)
-        betAlabel.configure(text='Amount to bet on {}:\n${}'.format(name1, betA))
-        betBlabel.configure(text='Amount to bet on {}:\n${}'.format(name2, betB))
-        profitAlabel.configure(text='Profit if {} wins:\n${}'.format(name1, profitA))
-        profitBlabel.configure(text='Profit if {} wins:\n${}'.format(name2, profitB))
-
-    expandroot = Tk()
-    expandroot.title('{} vs {}'.format(name1, name2))
-    # expandroot.geometry('1000x700')
-    # sf3 = ScrolledFrame(expandroot)
-    # sf3.pack(expand='yes',fill='both')
-    # sf3.bind_arrow_keys(expandroot)
-    # sf3.bind_scroll_wheel(expandroot)
-    # innerf3 = sf3.display_widget(Frame).pack()
-    # frame1 = Frame(innerf3)
-    frame1 = Frame(expandroot)
-    frame1.pack()
-
-    gamevs = Label(frame1, text='vs', font=('Arial', 40))
-    gamevs.grid(row=0, column=1, sticky='n')
-    labelname1 = Label(frame1, text='{}'.format(name1), font=('Arial', 40))
-    labelname1.grid(row=0, column=0, sticky='ne')
-    labelname2 = Label(frame1, text='{}'.format(name2), font=('Arial', 40))
-    labelname2.grid(row=0, column=2, sticky='nw')
-
-    for j in range(len(casinos)):
-        labelbet1 = Label(frame1, text=df.at[dataframeindex, 'Bet1 {}'.format(casinos[j])], font=('Arial', 30))
-        labelbet1.grid(row=1 + j, column=0, sticky='ne')
-        if labelbet1['text'] == str(df.at[dataframeindex, 'Max Bet1']):
-            labelbet1.configure(relief='groove', borderwidth=4)
-        labelcasino = Label(frame1, text='{}'.format(casinos[j]), font=('Arial', 30))
-        labelcasino.grid(row=1 + j, column=1, sticky='n')
-        labelbet2 = Label(frame1, text=df.at[dataframeindex, 'Bet2 {}'.format(casinos[j])], font=('Arial', 30))
-        labelbet2.grid(row=1 + j, column=2, sticky='nw')
-        if labelbet2['text'] == str(df.at[dataframeindex, 'Max Bet2']):
-            labelbet2.configure(relief='groove', borderwidth=4)
-
-    arb = Label(frame1, text='Arb', font=('Arial', 30)).grid(row=j + 2, column=1, sticky='n')
-    arbvalue = Label(frame1, text=round(df1.at[0, 'Arb value'], 4), font=('Arial', 25)).grid(row=j + 3, column=1, sticky='n')
-    ssbutton = Button(frame1, text='Generate Spreadsheet', font=('Arial', 15), borderwidth=4).grid(row=j + 4, column=1, sticky='n')
-    # frame2 = Frame(innerf3)
-    frame2 = Frame(expandroot)
-    frame2.pack()
-
-    totalbet = StringVar().set('0')
-    betA = 0
-    betB = 0
-    profitA = 0
-    profitB = 0
-
-    calcbutton = Button(frame2, text='Calculate', font=('Arial', 15), borderwidth=4, command=calculatebets).grid(row=1, column=2, sticky='n', padx=3, pady=6)
-    totalbetentry = Entry(frame2, width=7, font=('Arial', 20))
-    totalbetentry.grid(row=0, column=2, sticky='n', padx=3, pady=6)
-    betAlabel = Label(frame2, text='Amount to bet on {}:\n${}'.format(name1, betA), justify='left', font=('Arial', 14))
-    betAlabel.grid(row=0, column=0, sticky='nw', padx=3, pady=6)
-    betBlabel = Label(frame2, text='Amount to bet on {}:\n${}'.format(name2, betB), justify='left', font=('Arial', 14))
-    betBlabel.grid(row=0, column=3, sticky='nw', padx=3, pady=6)
-    profitAlabel = Label(frame2, text='Profit if {} wins:\n${}'.format(name1, profitA), justify='left', font=('Arial', 14))
-    profitAlabel.grid(row=1, column=0, sticky='nw', padx=3, pady=6)
-    profitBlabel = Label(frame2, text='Profit if {} wins:\n${}'.format(name2, profitB), justify='left', font=('Arial', 14))
-    profitBlabel.grid(row=1, column=3, sticky='nw', padx=3, pady=6)
-
-    expandroot.mainloop()
-
-
 
 
 df1 = DataFrame({
@@ -139,111 +24,225 @@ df1 = DataFrame({
     'Arb value': nan,
     'Arb': nan
 })
+
+df2 = DataFrame({
+    'Name1': ['Bob2', 'John2', 'Billy2', 'Nathan2', 'Sam2'],
+    'Bet1 fd': [130, 195, -115, -175, 270],
+    'Bet1 dk': [130, 200, -130, -180, 285],
+    'Bet1 bm': [135, 185, -110, -165, 280],
+    'Max Bet1': nan,
+    'Max Bet1 Casino': nan,
+    'Max Bet1 Conv': nan,
+    'Name2': ['Chris2', 'Romeo2', 'Blake2', 'Philip2', 'Jake2'],
+    'Bet2 fd': [-110, -180, 130, 180, -220],
+    'Bet2 dk': [-120, -170, 110, 175, -225],
+    'Bet2 bm': [-115, -165, 115, 170, -230],
+    'Max Bet2': nan,
+    'Max Bet2 Casino': nan,
+    'Max Bet2 Conv': nan,
+    'Arb value': nan,
+    'Arb': nan
+})
+
+dfs = [df1, df2]
 casinos = ['dk','fd','bm']
 
-df1['Max Bet1'] = df1[{'Bet1 dk', 'Bet1 fd', 'Bet1 bm'}].max(axis=1)
-df1['Max Bet1 Casino'] = df1[{'Bet1 dk', 'Bet1 fd', 'Bet1 bm'}].idxmax(axis='columns').str[-2:]
+for df in dfs:
+    df['Max Bet1'] = df[{'Bet1 dk', 'Bet1 fd', 'Bet1 bm'}].max(axis=1)
+    df['Max Bet1 Casino'] = df[{'Bet1 dk', 'Bet1 fd', 'Bet1 bm'}].idxmax(axis='columns').str[-2:]
 
-df1['Max Bet2'] = df1[{'Bet2 dk', 'Bet2 fd', 'Bet2 bm'}].max(axis=1)
-df1['Max Bet2 Casino'] = df1[{'Bet2 dk', 'Bet2 fd', 'Bet2 bm'}].idxmax(axis='columns').str[-2:]
+    df['Max Bet2'] = df[{'Bet2 dk', 'Bet2 fd', 'Bet2 bm'}].max(axis=1)
+    df['Max Bet2 Casino'] = df[{'Bet2 dk', 'Bet2 fd', 'Bet2 bm'}].idxmax(axis='columns').str[-2:]
 
-df1.loc[df1['Max Bet1'] < 0, 'Max Bet1 Conv'] = (-100 / df1['Max Bet1']) + 1
-df1.loc[df1['Max Bet1'] > 0, 'Max Bet1 Conv'] = (df1['Max Bet1'] / 100) + 1
-df1.loc[df1['Max Bet2'] < 0, 'Max Bet2 Conv'] = (-100 / df1['Max Bet2']) + 1
-df1.loc[df1['Max Bet2'] > 0, 'Max Bet2 Conv'] = (df1['Max Bet2'] / 100) + 1
+    df.loc[df['Max Bet1'] < 0, 'Max Bet1 Conv'] = (-100 / df['Max Bet1']) + 1
+    df.loc[df['Max Bet1'] > 0, 'Max Bet1 Conv'] = (df['Max Bet1'] / 100) + 1
+    df.loc[df['Max Bet2'] < 0, 'Max Bet2 Conv'] = (-100 / df['Max Bet2']) + 1
+    df.loc[df['Max Bet2'] > 0, 'Max Bet2 Conv'] = (df['Max Bet2'] / 100) + 1
 
-df1['Arb value'] = (1 / df1['Max Bet1 Conv']) + (1 / df1['Max Bet2 Conv'])
-df1.loc[df1['Arb value'] <= 1, 'Arb'] = True
-values = {'Bet1 dk':0,'Bet1 fd':0,'Bet1 bm':0,'Bet2 dk':0,'Bet2 fd':0,'Bet2 bm':0,'Arb':False}
-df1 = df1.fillna(value=values)
-print(df1)
-
-
-#creating the main menu window and all necessary widghets
-root = Tk()
-root.title('Arbitrage Betting')
-l1 = Label(root,text="Arbitrage Betting",font=("Arial",50)).pack()
-f = Frame(root)
-f.pack()
-f2 = Frame(root)
-f2.pack()
-
-var1 = IntVar() #creating and setting the variables for the check boxes
-var2 = IntVar()
-var3 = IntVar()
-var4 = IntVar()
-var5 = IntVar()
-var6 = IntVar()
-#creating all of the widgets for main menu
-check1 = Checkbutton(f,text='MMA',font=("Arial",20),variable=var1,width=10,relief='groove').grid(row=0,column=0,pady=10,padx=10)
-check2 = Checkbutton(f,text='Basketball',font=("Arial",20),variable=var2,width=10,relief='groove').grid(row=0,column=1,pady=10,padx=10)
-check3 = Checkbutton(f,text='Hockey',font=("Arial",20),variable=var3,width=10,relief='groove').grid(row=1,column=0,pady=10,padx=10)
-check4 = Checkbutton(f,text='Baseball',font=("Arial",20),variable=var4,width=10,relief='groove').grid(row=1,column=1,pady=10,padx=10)
-check5 = Checkbutton(f,text='Soccer',font=("Arial",20),variable=var5,width=10,relief='groove').grid(row=2,column=0,pady=10,padx=10)
-check6 = Checkbutton(f,text='Football',font=("Arial",20),variable=var6,width=10,relief='groove').grid(row=2,column=1,pady=10,padx=10)
-checkall = Button(f2,text='Select All',font=('Arial',13),borderwidth=3,relief='raised',command=selectall).pack(side='left')
-uncheckall = Button(f2,text='Deselect All',font=('Arial',13),borderwidth=3,relief='raised',command=deselectall).pack(side='right')
-gen = Button(root,text="Find Arbs",font=("Arial",20),borderwidth=5,relief='raised',command=getarb).pack()
-
-#Creating the second window to display the arbs (This would be done when the "Find Arbs" button from the main menu is pressed
-root2 = Tk()
-root2.title('Arbs')
-# root2.geometry('1400x900')
-
-sf = ScrolledFrame(root2) #making the window scroll if needed
-sf.pack(expand='yes',fill='both')
-sf.bind_arrow_keys(root2)
-sf.bind_scroll_wheel(root2)
-innerf = sf.display_widget(Frame)
-
-lf2 = LabelFrame(innerf,text='UFC',font=("Arial",20))
-lf2.pack(fill='both',expand='yes',pady=10,padx=15)
-
-for row in range(len(df1)):
-    for column in range(6):
-        if (row*4)+column == len(df1):
-            break
-        frame = LabelFrame(lf2,width=290,height=110)
-        frame.grid(row=row,column=column,pady=5,padx=10)
-        frame.pack_propagate(0)
-
-        name1label = Label(frame, text='{}'.format(df1.at[(row*4)+column,'Name1']),font=("Arial",20))
-        name1label.place(relx=0.44, rely=0, anchor='ne')
-        vs = Label(frame, text='vs', font=("Arial", 20))
-        vs.place(relx=0.5,rely=0,anchor='n')
-        name2label = Label(frame, text='{}'.format(df1.at[(row * 4) + column, 'Name2']), font=("Arial", 20))
-        name2label.place(relx=0.56, rely=0, anchor='nw')
-
-        l2 = Label(frame,text='{}  {}'.format(df1.at[(row*4)+column,'Max Bet1'],df1.at[(row*4)+column,'Max Bet1 Casino']),font=("Arial",14))
-        l2.place(relx=0.44, rely=0.325, anchor='ne')
-
-        l3 = Label(frame, text='{}  {}'.format(df1.at[(row * 4) + column, 'Max Bet2'], df1.at[(row * 4) + column, 'Max Bet2 Casino']),font=("Arial",14))
-        l3.place(relx=0.56, rely=0.325, anchor='nw')
-
-        rowlabel = Label(frame, text=row)
-        rowlabel.place(relx=0.25,rely=1,anchor='sw')
-        columnlabel = Label(frame, text=column)
-        columnlabel.place(relx=0.75,rely=1,anchor='se')
-
-        button = Button(frame,text='Expand',command=lambda: expandgame(rowlabel['text'],columnlabel['text'],df1))
-        button.place(relx=0.5,rely=1,anchor='s')
-
-        l4 = Label(frame, text=round(df1.at[(row * 4) + column, 'Arb value'],4),font=('Arial',12,'bold'))
-        l4.place(relx=0.5,rely=0.8,anchor='s')
-
-        l5 = Label(frame,text='Arb',font=('Arial',10,'bold'))
-        l5.place(relx=0.5,rely=0.625,anchor='s')
-
-    if (row*4)+column == len(df1):
-        break
-if row > 0:
-    root2width = 1860
-else:
-    root2width = column * 310 + 50
-root2height = (row + 1) * 120 + 100
-root2.geometry('{}x{}'.format(root2width,root2height))
+    df['Arb value'] = (1 / df['Max Bet1 Conv']) + (1 / df['Max Bet2 Conv'])
+    df.loc[df['Arb value'] <= 1, 'Arb'] = True
+    values = {'Bet1 dk':0,'Bet1 fd':0,'Bet1 bm':0,'Bet2 dk':0,'Bet2 fd':0,'Bet2 bm':0,'Arb':False}
+    df = df.fillna(value=values)
 
 
-root2.mainloop()
 
-root.mainloop()
+# df1['Max Bet1'] = df1[{'Bet1 dk', 'Bet1 fd', 'Bet1 bm'}].max(axis=1)
+# df1['Max Bet1 Casino'] = df1[{'Bet1 dk', 'Bet1 fd', 'Bet1 bm'}].idxmax(axis='columns').str[-2:]
+
+# df1['Max Bet2'] = df1[{'Bet2 dk', 'Bet2 fd', 'Bet2 bm'}].max(axis=1)
+# df1['Max Bet2 Casino'] = df1[{'Bet2 dk', 'Bet2 fd', 'Bet2 bm'}].idxmax(axis='columns').str[-2:]
+
+# df1.loc[df1['Max Bet1'] < 0, 'Max Bet1 Conv'] = (-100 / df1['Max Bet1']) + 1
+# df1.loc[df1['Max Bet1'] > 0, 'Max Bet1 Conv'] = (df1['Max Bet1'] / 100) + 1
+# df1.loc[df1['Max Bet2'] < 0, 'Max Bet2 Conv'] = (-100 / df1['Max Bet2']) + 1
+# df1.loc[df1['Max Bet2'] > 0, 'Max Bet2 Conv'] = (df1['Max Bet2'] / 100) + 1
+
+# df1['Arb value'] = (1 / df1['Max Bet1 Conv']) + (1 / df1['Max Bet2 Conv'])
+# df1.loc[df1['Arb value'] <= 1, 'Arb'] = True
+# values = {'Bet1 dk':0,'Bet1 fd':0,'Bet1 bm':0,'Bet2 dk':0,'Bet2 fd':0,'Bet2 bm':0,'Arb':False}
+# df1 = df1.fillna(value=values)
+# print(df1)
+
+
+
+class DisplayDataFrame(QTableView): #have it display the dataframe and only the important columns. The user can then select a match to expand
+    def __init__(self, dataFrame:DataFrame):
+        super().__init__()
+        self.data = dataFrame
+        # for i in range(len(self.data.index)):
+        #     pass
+        self.model = PandasModel(self.data)
+        self.setModel(self.model)
+        self.setFont(QFont('IDK',15))
+        self.resizeColumnsToContents()
+        self.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.doubleClicked.connect(self.testing)
+    
+    def testing(self, index):
+        print(index.row())
+
+
+class PandasModel(QAbstractTableModel):
+
+    def __init__(self, data):
+        QAbstractTableModel.__init__(self)
+        self._data = data
+
+    def rowCount(self, parent=None):
+        return self._data.shape[0]
+
+    def columnCount(self, parent=None):
+        return self._data.shape[1]
+
+    def data(self, index, role):
+        if index.isValid():
+            value = self._data.iloc[index.row(), index.column()]
+            if role == Qt.DisplayRole:
+                if isinstance(value, float):
+                    return str(round(value, 3))
+                return str(value)
+            elif role == Qt.BackgroundRole:
+                if self._data.columns[index.column()] == 'Arb' and value == True:
+                    return QColor('green')
+                elif self._data.columns[index.column()] == 'Arb value':
+                    if value >= 1:
+                        return QColor('red')
+                    elif 1 > value >= 0.95:
+                        return QColor('green')
+                    else:
+                        return QColor('yellow')
+            elif role == Qt.TextAlignmentRole:
+                if isinstance(value, float) or isinstance(value, int):
+                    return Qt.AlignRight
+        return None
+
+    def headerData(self, index, orientation, role):
+        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
+            return self._data.columns[index]
+        elif orientation == Qt.Vertical and role == Qt.DisplayRole:
+            return index+1
+        return None
+
+class DataViewWindow(QMainWindow):
+    def __init__(self, dataFrames):
+        super().__init__()
+
+        self.setWindowTitle('Data')
+        self.setBaseSize(800, 500)
+        self.tabs = QTabWidget()
+        self.setCentralWidget(self.tabs)
+
+        for i in range(len(dataFrames)):
+            newTab = QWidget()
+            layout = QVBoxLayout()
+            table = DisplayDataFrame(dataFrames[i])
+            layout.addWidget(table)
+            newTab.setLayout(layout)
+            self.tabs.addTab(newTab, 'Tab {}'.format(i))
+            table.show()
+
+
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        self.setWindowTitle('Arbitrage Betting')
+        self.setMaximumSize(500, 400)
+        self.widget = QWidget()
+        self.setCentralWidget(self.widget)
+
+        self.title = QLabel('Arbitrage Betting')
+        self.title.setFont(QFont('IDK',40))
+        self.mlb = QCheckBox('MLB')
+        self.mlb.setFont(QFont('IDK',20))
+        self.nhl = QCheckBox('NHL')
+        self.nhl.setFont(QFont('IDK',20))
+        self.ufc = QCheckBox('UFC')
+        self.ufc.setFont(QFont('IDK',20))
+        self.nba = QCheckBox('NBA')
+        self.nba.setFont(QFont('IDK',20))
+        self.mls = QCheckBox('MLS')
+        self.mls.setFont(QFont('IDK',20))
+        self.checkAllButton = QPushButton('Select All', clicked=self.checkAll)
+        self.checkAllButton.setFont(QFont('IDK',15))
+        self.uncheckAllButton = QPushButton('Deselect All', clicked=self.uncheckAll)
+        self.uncheckAllButton.setFont(QFont('IDK',15))
+        self.findArbButton = QPushButton('Find Arbs', clicked=self.findArbs)
+        self.findArbButton.setFont(QFont('IDK',15))
+
+        # self.checkAllButton.clicked.connect(self.checkAll)
+        # self.uncheckAllButton.clicked.connect(self.uncheckAll)
+        # self.findArbButton.clicked.connect(self.findArbs)
+
+        g = QGridLayout()
+        g.addWidget(self.title, 0, 0, 1, 2, alignment=Qt.AlignCenter | Qt.AlignTop)
+        g.addWidget(self.mlb, 1, 0, alignment=Qt.AlignCenter)
+        g.addWidget(self.nhl, 1, 1, alignment=Qt.AlignCenter)
+        g.addWidget(self.ufc, 2, 0, alignment=Qt.AlignCenter)
+        g.addWidget(self.nba, 2, 1, alignment=Qt.AlignCenter)
+        g.addWidget(self.mls, 3, 0, alignment=Qt.AlignCenter)
+        g.addWidget(self.checkAllButton, 4, 0)
+        g.addWidget(self.uncheckAllButton, 4, 1)
+        g.addWidget(self.findArbButton, 5, 0, 1, 2)
+
+        self.widget.setLayout(g)
+        self.sportOptions = [self.mlb, self.nhl, self.ufc, self.nba, self.mls]
+
+    def checkAll(self):
+        for sport in self.sportOptions:
+            sport.setChecked(True)
+
+    def uncheckAll(self):
+        for sport in self.sportOptions:
+            sport.setChecked(False)
+
+    def findArbs(self):
+        sports = []
+        for sport in self.sportOptions:
+            if sport.isChecked() == True:
+                sports.append(sport.text().lower())
+        print(sports)
+        if sports == []:
+            msg = QMessageBox()
+            msg.setText('At least 1 sport must be selected to begine finding viable arbs')
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.exec_()
+        else:# this will be the code in the main file to find the arbs
+            self.data = DataViewWindow(dfs)
+            self.data.show()
+
+
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    # model = PandasModel(df1)
+    # view = QTableView()
+    # view.setModel(model)
+    # view.setFont(QFont('IDK',15))
+    # view.resizeColumnsToContents()
+    # view.show()
+    app.exec_()

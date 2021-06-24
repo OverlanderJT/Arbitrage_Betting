@@ -1,5 +1,5 @@
 from functions import alphabetize, singleconvert
-from functions import alphabetize, singleconvert
+
 
 def ufc_data(html_names:list, html_bets:list) -> list:
     bets1 = []
