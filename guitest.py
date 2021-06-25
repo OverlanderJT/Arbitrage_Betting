@@ -65,26 +65,6 @@ for df in dfs:
     df = df.fillna(value=values)
 
 
-
-# df1['Max Bet1'] = df1[{'Bet1 dk', 'Bet1 fd', 'Bet1 bm'}].max(axis=1)
-# df1['Max Bet1 Casino'] = df1[{'Bet1 dk', 'Bet1 fd', 'Bet1 bm'}].idxmax(axis='columns').str[-2:]
-
-# df1['Max Bet2'] = df1[{'Bet2 dk', 'Bet2 fd', 'Bet2 bm'}].max(axis=1)
-# df1['Max Bet2 Casino'] = df1[{'Bet2 dk', 'Bet2 fd', 'Bet2 bm'}].idxmax(axis='columns').str[-2:]
-
-# df1.loc[df1['Max Bet1'] < 0, 'Max Bet1 Conv'] = (-100 / df1['Max Bet1']) + 1
-# df1.loc[df1['Max Bet1'] > 0, 'Max Bet1 Conv'] = (df1['Max Bet1'] / 100) + 1
-# df1.loc[df1['Max Bet2'] < 0, 'Max Bet2 Conv'] = (-100 / df1['Max Bet2']) + 1
-# df1.loc[df1['Max Bet2'] > 0, 'Max Bet2 Conv'] = (df1['Max Bet2'] / 100) + 1
-
-# df1['Arb value'] = (1 / df1['Max Bet1 Conv']) + (1 / df1['Max Bet2 Conv'])
-# df1.loc[df1['Arb value'] <= 1, 'Arb'] = True
-# values = {'Bet1 dk':0,'Bet1 fd':0,'Bet1 bm':0,'Bet2 dk':0,'Bet2 fd':0,'Bet2 bm':0,'Arb':False}
-# df1 = df1.fillna(value=values)
-# print(df1)
-
-
-
 class DisplayDataFrame(QTableView): #have it display the dataframe and only the important columns. The user can then select a match to expand
     def __init__(self, dataFrame:DataFrame):
         super().__init__()
@@ -116,7 +96,7 @@ class PandasModel(QAbstractTableModel):
             value = self._data.iloc[index.row(), index.column()]
             if role == Qt.DisplayRole:
                 if isinstance(value, float):
-                    return str(round(value, 3))
+                    return str(round(value, 4))
                 return str(value)
             elif role == Qt.BackgroundRole:
                 if self._data.columns[index.column()] == 'Arb' and value == True:
@@ -141,40 +121,14 @@ class PandasModel(QAbstractTableModel):
         return None
 
 
-class DataViewWindow(QMainWindow):
-    def __init__(self, dataFrames, casinos):
+class Match(QWidget):
+    def __init__(self, casinos):
         super().__init__()
-        self.main = QWidget()
-        self.data = dataFrames
-        self.setWindowTitle('Data')
-        self.setBaseSize(800, 500)
-
-        self.currentTab = None
-        self.currentRow = None
         self.casinos = casinos
-        self.tabs = QTabWidget()
-        self.setCentralWidget(self.main)
-        self.hori = QHBoxLayout()
-
-        for i in range(len(dataFrames)):
-            newTab = QWidget()
-            layout = QVBoxLayout()
-            table = DisplayDataFrame(dataFrames[i])
-            table.setObjectName('dataframe{}'.format(i))
-            table.doubleClicked.connect(self.updateMatch)
-            layout.addWidget(table)
-            newTab.setLayout(layout)
-            self.tabs.addTab(newTab, 'Tab {}'.format(i))
-            table.show()
-        
-        self.hori.addWidget(self.tabs)
-        self.main.setLayout(self.hori)
-
-        # self.tabs.children() #need to somehow access the tables
-
-        self.match = QWidget()
+        self.setMaximumWidth(400)
+        self.setMinimumWidth(400)
         self.matchlayout = QGridLayout()
-        self.match.setLayout(self.matchlayout)
+        self.setLayout(self.matchlayout)
         self.team1L = QLabel('')
         self.team1L.setFont(QFont('IDK',20))
         self.team2L = QLabel('')
@@ -189,13 +143,13 @@ class DataViewWindow(QMainWindow):
         self.totalBetL.setFont(QFont('IDK',20))
         self.totalBetText = QLineEdit()
         self.totalBetText.setFont(QFont('IDK',20))
+        self.totalBetText.setPlaceholderText('Total Bet Amount')
+        self.totalBetText.setAlignment(Qt.AlignCenter)
         validator = QDoubleValidator(bottom=0, decimals=2)
         self.totalBetText.setValidator(validator)
         self.totalBetText.setMaxLength(12)
-        self.totalBetText.returnPressed.connect(self.calculateBets)
         self.calculateTeamBets = QPushButton('Calculate Bets')
         self.calculateTeamBets.setFont(QFont('IDK',20))
-        self.calculateTeamBets.clicked.connect(self.calculateBets)
         self.totalBet1L = QLabel('Bet1')
         self.totalBet1L.setFont(QFont('IDK',20))
         self.totalBet1ValL = QLabel('$0')
@@ -230,55 +184,90 @@ class DataViewWindow(QMainWindow):
         self.matchlayout.addWidget(self.estProfitValL, 8 + len(self.casinos), 1, alignment=Qt.AlignCenter)
 
 
+class DataViewWindow(QMainWindow):
+    def __init__(self, dataFrames, casinos):
+        super().__init__()
+        self.main = QWidget()
+        self.data = dataFrames
+        self.setWindowTitle('Data')
+        self.setMinimumWidth(1575)
+        # self.resize(1575, 500)
+
+        self.currentTab = None
+        self.currentRow = None
+        self.casinos = casinos
+        self.tabs = QTabWidget()
+        self.setCentralWidget(self.main)
+        self.hori = QHBoxLayout()
+
+        for i in range(len(dataFrames)):
+            newTab = QWidget()
+            layout = QVBoxLayout()
+            table = DisplayDataFrame(dataFrames[i])
+            table.setObjectName('dataframe{}'.format(i))
+            table.doubleClicked.connect(self.updateMatch)
+            layout.addWidget(table)
+            newTab.setLayout(layout)
+            self.tabs.addTab(newTab, 'Tab {}'.format(i))
+            table.show()
+        
+        self.hori.addWidget(self.tabs)
+        self.main.setLayout(self.hori)
+
+        self.match = Match(self.casinos)
+        self.match.totalBetText.returnPressed.connect(self.calculateBets)
+        self.match.calculateTeamBets.clicked.connect(self.calculateBets)
         self.hori.addWidget(self.match)
+        self.match.setVisible(False)
 
     def updateMatch(self, index):
         
         row = index.row()
         frame = self.tabs.currentIndex()
+
         if self.currentRow == row and self.currentTab == frame:
-            print('caught')
             return None
-        print('It didnt work')
+
+        self.match.setVisible(True)
         name1 = self.data[frame].at[row, 'Team 1']
         name2 = self.data[frame].at[row, 'Team 2']
         maxOdd1 = self.data[frame].at[row, 'Max Bet1']
         maxOdd2 = self.data[frame].at[row, 'Max Bet2']
         arbVal = round(self.data[frame].at[row, 'Arb value'], 4)
 
-        self.team1L.setText(name1)
-        self.team2L.setText(name2)
-        self.arbValL.setText(str(arbVal))
+        self.match.team1L.setText(name1)
+        self.match.team2L.setText(name2)
+        self.match.arbValL.setText(str(arbVal))
 
         for i in range(len(self.casinos)):
             newOdd1 = self.data[frame].at[row, 'Bet1 {}'.format(self.casinos[i])]
             newOdd2 = self.data[frame].at[row, 'Bet2 {}'.format(self.casinos[i])]
             
             
-            if self.matchlayout.itemAtPosition(i+1, 0) == None:
+            if self.match.matchlayout.itemAtPosition(i+1, 0) == None:
                 self.odd1L = QLabel(str(newOdd1))
                 self.odd1L.setFont(QFont('IDK',20))
                 self.odd2L = QLabel(str(newOdd2))
                 self.odd2L.setFont(QFont('IDK',20))
 
-                self.matchlayout.addWidget(self.odd1L, i+1, 0, alignment=Qt.AlignCenter)
-                self.matchlayout.addWidget(self.odd2L, i+1, 2, alignment=Qt.AlignCenter)
+                self.match.matchlayout.addWidget(self.odd1L, i+1, 0, alignment=Qt.AlignCenter)
+                self.match.matchlayout.addWidget(self.odd2L, i+1, 2, alignment=Qt.AlignCenter)
             else:
-                odd1 = self.matchlayout.itemAtPosition(i+1, 0)
+                odd1 = self.match.matchlayout.itemAtPosition(i+1, 0)
                 widgetodd1 = odd1.widget()
                 widgetodd1.setStyleSheet('')
                 widgetodd1.setText(str(newOdd1))
-                odd2 = self.matchlayout.itemAtPosition(i+1, 2)
+                odd2 = self.match.matchlayout.itemAtPosition(i+1, 2)
                 widgetodd2 = odd2.widget()
                 widgetodd2.setStyleSheet('')
                 widgetodd2.setText(str(newOdd2))
 
             if newOdd1 == maxOdd1:
-                maxodd1 = self.matchlayout.itemAtPosition(i+1, 0)
+                maxodd1 = self.match.matchlayout.itemAtPosition(i+1, 0)
                 widgetmaxodd1 = maxodd1.widget()
                 widgetmaxodd1.setStyleSheet('background: #FFFFFF; border: 2px solid black')
             if newOdd2 == maxOdd2:
-                maxodd2 = self.matchlayout.itemAtPosition(i+1, 2)
+                maxodd2 = self.match.matchlayout.itemAtPosition(i+1, 2)
                 widgetmaxodd2 = maxodd2.widget()
                 widgetmaxodd2.setStyleSheet('background: #FFFFFF; border: 2px solid black')
 
@@ -287,15 +276,15 @@ class DataViewWindow(QMainWindow):
 
 
     def calculateBets(self):
-        bet = float(self.totalBetText.text())
+        bet = float(self.match.totalBetText.text())
         maxA = self.data[self.currentTab].at[self.currentRow, 'Max Bet1 Conv']
         maxB = self.data[self.currentTab].at[self.currentRow, 'Max Bet2 Conv']
         betA = round(bet/(1 + (maxA/maxB)), 2)
         betB = round(bet/(1 + (maxB/maxA)), 2)
         profit = round(bet*( ((maxA*maxB) - (maxA + maxB))/ (maxA + maxB) ), 2)
-        self.totalBet1ValL.setText('${}'.format(str(betA)))
-        self.totalBet2ValL.setText('${}'.format(str(betB)))
-        self.estProfitValL.setText('${}'.format(str(profit)))
+        self.match.totalBet1ValL.setText('${}'.format(str(betA)))
+        self.match.totalBet2ValL.setText('${}'.format(str(betB)))
+        self.match.estProfitValL.setText('${}'.format(str(profit)))
 
 
 class MainWindow(QMainWindow):
