@@ -277,9 +277,9 @@ if __name__ == '__main__':
     options = Options()
     options.headless = True
     driver = webdriver.Firefox(options=options)
-    driver.get('https://sportsbook.draftkings.com/leagues/basketball/103?category=game-lines&subcategory=game')
-    driver_bets = driver.find_elements(By.CLASS_NAME, 'sportsbook-table__column-row')
-    driver_names = driver.find_elements(By.CLASS_NAME, 'event-cell__name')
+    driver.get('https://sportsbook.draftkings.com/leagues/soccer/101?category=game-lines&subcategory=money-line-(regular-time)')
+    driver_bets = driver.find_elements(By.CLASS_NAME, 'sportsbook-outcome-cell')
+    driver_names = driver.find_elements(By.CLASS_NAME, 'sportsbook-event-accordion__title')
     for bet in driver_bets:
         temp1.append(bet.text)
     for name in driver_names:
@@ -290,7 +290,7 @@ if __name__ == '__main__':
     #print()
     driver.quit()
     #print(nba_data(temp2, temp1))
-    temp = nba_data(temp2, temp1)
+    temp = mls_data(temp2, temp1)
     for item in temp:
         print(len(item))
         print(item)

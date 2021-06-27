@@ -11,6 +11,7 @@ import casinos.fanduel as fd #need to add another import per casino
 import casinos.draftkings as dk
 import casinos.betmgm as bm
 import casinos.betrivers as br
+import casinos.pointsbet as pb
 
 
 clear = lambda: os.system('cls') #creating the function to clear the terminal for user friendliness
@@ -100,10 +101,21 @@ betriverslive = Casino( #this casino is for betrivers live games since they happ
     }
 )
 
+pointsbet = Casino(
+    usersports,
+    tag = ('pb', pb),
+    html_data={
+        'ufc':('https://mi.pointsbet.com/sports/mma/UFC','fsu5r7i', 'f10krlro.f1a0sb7x.f14nmd6v'),
+        'mlb':('https://mi.pointsbet.com/sports/baseball/MLB','fji5frh.fr8jv7a.f1wtz5iq', 'f1t29imj.f1yn18fe.f93i66z'),
+        'nhl':('https://mi.pointsbet.com/sports/ice-hockey/NHL','fji5frh.fr8jv7a.f1wtz5iq', 'f1t29imj.f1yn18fe.f93i66z'),
+        'nba':('https://mi.pointsbet.com/sports/basketball/NBA','fji5frh.fr8jv7a.f1wtz5iq', 'f1t29imj.f1yn18fe.f93i66z'),
+        'mls':('https://mi.pointsbet.com/sports/soccer/Major-League-Soccer','fsu5r7i', 'f10krlro.f1a0sb7x.f14nmd6v'),
+    }
+)
 
 #must add each additional casino to the below tuple. 
 #for casinos with a seperate live casino and future casino, put the live casino before the future
-CASINOS = [fanduel,  betmgm, draftkings, betriverslive, betrivers]
+CASINOS = [fanduel,  betmgm, draftkings, betriverslive, betrivers, pointsbet]
 COLUMNS = {'Team 1':[nan],'Max Bet1':[nan],'Max Bet1 Casino':[nan],'Max Bet1 Conv':[nan],'Team 2':[nan],'Max Bet2':[nan],'Max Bet2 Casino':[nan],'Max Bet2 Conv':[nan]}
 BASEDF = DataFrame(data=COLUMNS)
 COLUMNSDRAW = {'Team 1':[nan],'Max Bet1':[nan],'Max Bet1 Casino':[nan],'Max Bet1 Conv':[nan],'Team 2':[nan],'Max Bet2':[nan],'Max Bet2 Casino':[nan],'Max Bet2 Conv':[nan], 'Max Bet Draw':[nan],'Max Bet Draw Casino':[nan],'Max Bet Draw Conv':[nan]}
@@ -147,7 +159,7 @@ for casino in CASINOS:
         driver.get(casino.html_data[sport][0])
         casino.window_handles[sport] = driver.current_window_handle
 print('Loading in Web Pages')
-sleep(20) #wait time to make sure that all pages are loaded in
+sleep(10) #wait time to make sure that all pages are loaded in
 
 #get the data from the urls
 for casino in CASINOS:
@@ -161,6 +173,7 @@ for casino in CASINOS:
         #print(driver.current_window_handle) #debug
         #print(casino.window_handles[sport]) #debug
         driver.switch_to.window(casino.window_handles[sport])
+        sleep(0.75)
         height = driver.execute_script("return document.body.scrollHeight")
         loop = True
         #This scrolls the window down to the bottom of the page to load in all the data
@@ -181,10 +194,10 @@ for casino in CASINOS:
         casino.html_bets[sport] = temp1
         casino.html_names[sport] = temp2
         #debug
-        print(temp1)
-        print()
-        print(temp2)
-        print()
+        #print(temp1)
+        #print()
+        #print(temp2)
+        #print()
 driver.quit()
 
 #combines the live casinos with their other casino
@@ -196,9 +209,10 @@ for i in range(len(CASINOS)):
     else:
         if CASINOS[i].tag[0] == CASINOS[i+1].tag[0]:
             for sport in CASINOS[i].html_names:
-                for j in range(len(CASINOS[i].html_names[sport])):
-                    CASINOS[i].html_names[sport].append(CASINOS[i+1].html_names[sport][j])
-                    CASINOS[i].html_bets[sport].append(CASINOS[i+1].html_bets[sport][j])
+                for item in CASINOS[i+1].html_names[sport]:
+                    CASINOS[i].html_names[sport].append(item)
+                for item in CASINOS[i+1].html_bets[sport]:
+                    CASINOS[i].html_bets[sport].append(item)
             del CASINOS[i+1] #removes the future casino since all of its data is now in the live casino
 
 #sort the data for each casino and sport and create the dataframes for each sport
