@@ -33,7 +33,7 @@ while (q == False):
         print('Duplicate Entry')
     else:
         print('Invalid entry')
-    
+
 print('Selected Sports')
 print(usersports)
 

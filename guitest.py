@@ -105,7 +105,7 @@ class PandasModel(QAbstractTableModel):
                     if value >= 1:
                         return QColor('red')
                     elif 1 > value >= 0.95:
-                        return QColor('green')
+                        return QColor('#ABCDEF')
                     else:
                         return QColor('yellow')
             elif role == Qt.TextAlignmentRole:
@@ -145,7 +145,7 @@ class Match(QWidget):
         self.totalBetText.setFont(QFont('IDK',20))
         self.totalBetText.setPlaceholderText('Total Bet Amount')
         self.totalBetText.setAlignment(Qt.AlignCenter)
-        validator = QDoubleValidator(bottom=0, decimals=2)
+        validator = QIntValidator(bottom=0)
         self.totalBetText.setValidator(validator)
         self.totalBetText.setMaxLength(12)
         self.calculateTeamBets = QPushButton('Calculate Bets')
@@ -276,7 +276,7 @@ class DataViewWindow(QMainWindow):
 
 
     def calculateBets(self):
-        bet = float(self.match.totalBetText.text())
+        bet = int(self.match.totalBetText.text())
         maxA = self.data[self.currentTab].at[self.currentRow, 'Max Bet1 Conv']
         maxB = self.data[self.currentTab].at[self.currentRow, 'Max Bet2 Conv']
         betA = round(bet/(1 + (maxA/maxB)), 2)
@@ -362,10 +362,4 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
-    # model = PandasModel(df1)
-    # view = QTableView()
-    # view.setModel(model)
-    # view.setFont(QFont('IDK',15))
-    # view.resizeColumnsToContents()
-    # view.show()
     app.exec_()
